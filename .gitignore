@@ -11,7 +11,7 @@ __pycache__/
 
 # env
 .env    # env variables
-env/    # python virtual env
+venv/    # python virtual env
 
 # scraper
 *.csv

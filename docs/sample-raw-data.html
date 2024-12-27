@@ -1,0 +1,488 @@
+<!-- NOTE: START OF A NEW PAGE -->
+<div id="currentPage">
+    <div id="paginator">
+    </div>
+    <div id="paginatorReport">
+    </div>
+    <div class="clear">
+    </div>
+</div>
+<script>
+    YAHOO.util.Event.onDOMReady(function () {
+        Nifty("div.classHeaderRounded", "small");
+        // Add hovers to paginators
+        YAHOO.mis.student.Util.doForEachElement(".yui-pg-last",
+            function (element) {
+                element.setAttribute("title", "Jump to the last page of results");
+            });
+        YAHOO.mis.student.Util.doForEachElement(".yui-pg-first",
+            function (element) {
+                element.setAttribute("title", "Jump to the first page of results");
+            });
+        YAHOO.mis.student.Util.doForEachElement(".yui-pg-next",
+            function (element) {
+                element.setAttribute("title", "Jump to the next page of results");
+            });
+        YAHOO.mis.student.Util.doForEachElement(".yui-pg-previous",
+            function (element) {
+                element.setAttribute("title", "Jump to the previous page of results");
+            });
+    });
+    var pag = new YAHOO.widget.Paginator({
+        initialPage: 3,
+        rowsPerPage: 50,
+        totalRecords: 300,
+        containers: ['paginator', 'bottomPaginator'],
+        firstPageLinkLabel: "&laquo;",
+        lastPageLinkLabel: "&raquo;",
+        nextPageLinkLabel: "&rsaquo;",
+        previousPageLinkLabel: "&lsaquo;",
+        pageLinks: 10,
+        pageReportTemplate: "Displaying results {startRecord}-{endRecord} of {totalRecords}",
+        template: "{FirstPageLink}{PreviousPageLink}{PageLinks}{NextPageLink}{LastPageLink}",
+        alwaysVisible: false
+    });
+
+    var handlePagination = function (newState) {
+        YAHOO.mis.student.Ajax.load("/more/SearchClassesExecute!switchPage.action?pageNum=" + newState.page, { targetElementInstanceOrId: "searchClassSectionsResults" });
+        pag.setState(newState);
+    };
+
+    pag.subscribe('changeRequest', handlePagination);
+
+    pag.subscribe('render', function () {
+        var pageReport, pageReportNode, report;
+        report = YAHOO.util.Dom.get('paginatorReport');
+        pageReport = new YAHOO.widget.Paginator.ui.CurrentPageReport(pag);
+        pageReportNode = pageReport.render('paginatorReport');
+        report.appendChild(pageReportNode);
+    });
+
+    pag.render();
+
+</script>
+<!-- <div id="searchClassesResult"> -->
+<!-- <div class="classSectionTableTag" id="addClassSectionToCart_div"> -->
+
+
+
+
+
+
+
+
+    
+
+<!-- NOTE: START OF A NEW SECTION OF COURSES IN A SUBJECT -->
+
+<!--======================== Subject Area Information - only displayed if a different one than the last ========================-->
+<div class="subjectHeader">
+    <h4>
+        Engineering Science
+    </h4>
+</div>
+<!--======================== Course Information - only displayed if a different one than the last ========================-->
+<table class="classTable">
+    <tr>
+        <td class="classHeader" colspan="9">
+            <div class="classHeaderRounded classHeaderRounded_addClassSectionToCart_div">
+                <div class="left">
+                    <span class="classAbbreviation">
+                        ES 1001:
+                    </span>
+                    <span class="classDescription">
+                        Engineering Commons iSeminar - Lights, Camera and Vision...!!
+                    </span>
+                </div>
+                <div class="clear">
+                </div>
+            </div>
+        </td>
+    </tr>
+    <!--======================== Table "shims" - ancient way to prevent table cells from getting smaller than desired ========================-->
+    <tr class="classTableShim">
+        <td width="1%">
+            <img border="0" height="1" src="https://static-assets.app.vanderbilt.edu/academic/more/ss/images/empty.gif"
+                width="15" />
+        </td>
+        <td width="1%">
+            <img border="0" height="1" src="https://static-assets.app.vanderbilt.edu/academic/more/ss/images/empty.gif"
+                width="80" />
+        </td>
+        <td width="23%">
+            <img border="0" height="1" src="https://static-assets.app.vanderbilt.edu/academic/more/ss/images/empty.gif"
+                width="125" />
+        </td>
+        <td width="1%">
+            <img border="0" height="1" src="https://static-assets.app.vanderbilt.edu/academic/more/ss/images/empty.gif"
+                width="30" />
+        </td>
+        <td width="1%">
+            <img border="0" height="1" src="https://static-assets.app.vanderbilt.edu/academic/more/ss/images/empty.gif"
+                width="60" />
+        </td>
+        <td width="23%">
+            <img border="0" height="1" src="https://static-assets.app.vanderbilt.edu/academic/more/ss/images/empty.gif"
+                width="125" />
+        </td>
+        <td width="23%">
+            <img border="0" height="1" src="https://static-assets.app.vanderbilt.edu/academic/more/ss/images/empty.gif"
+                width="195" />
+        </td>
+        <td width="24%">
+            <img border="0" height="1" src="https://static-assets.app.vanderbilt.edu/academic/more/ss/images/empty.gif"
+                width="160" />
+        </td>
+        <td width="1%">
+            <img border="0" height="1" src="https://static-assets.app.vanderbilt.edu/academic/more/ss/images/empty.gif"
+                width="55" />
+        </td>
+    </tr>
+    <!--====================================== Class Section Information - always displayed ====================================-->
+    <tr class="odd classRow" id="addClassSectionToCart_classSectionListRow_3_header">
+        <td class="classSection" id="classNumber_5385"
+            onclick="YAHOO.mis.student.Topics.showClassDetailPanel.fire({classNumber : '5385', termCode : '1040', hideAddToCartButton : 'false'})">
+            12
+        </td>
+        <td class="classHours"
+            onclick="YAHOO.mis.student.Topics.showClassDetailPanel.fire({classNumber : '5385', termCode : '1040', hideAddToCartButton : 'false'})">
+            1.0 hrs
+        </td>
+        <td class="classType"
+            onclick="YAHOO.mis.student.Topics.showClassDetailPanel.fire({classNumber : '5385', termCode : '1040', hideAddToCartButton : 'false'})">
+            Seminar
+        </td>
+        <td class="classAvailability"
+            onclick="YAHOO.mis.student.Topics.showClassDetailPanel.fire({classNumber : '5385', termCode : '1040', hideAddToCartButton : 'false'})">
+            <a class="availableStatus" href="javascript:void(0);" id="linkaddClassSectionToCart_classSectionListRow_3">
+                9/15
+            </a>
+            <script type="text/javascript">
+                YAHOO.util.Event.onDOMReady(function () {
+                    YAHOO.util.Event.on('linkaddClassSectionToCart_classSectionListRow_3', 'mouseover', function () {
+                        BundleLib.showHelp('paneladdClassSectionToCart_classSectionListRow_3', 'linkaddClassSectionToCart_classSectionListRow_3');
+                    });
+                    YAHOO.util.Event.on('linkaddClassSectionToCart_classSectionListRow_3', 'mouseout', function () {
+                        BundleLib.hideHelp('paneladdClassSectionToCart_classSectionListRow_3');
+                    });
+                });
+            </script>
+            <div class="helpPanel hidden" id="paneladdClassSectionToCart_classSectionListRow_3">
+                <div class="helpBody">
+                    9 of 15 enrolled, 6 seat(s) available
+                </div>
+                <div class="helpFooter">
+                </div>
+            </div>
+        </td>
+        <td class="classMeetingDays"
+            onclick="YAHOO.mis.student.Topics.showClassDetailPanel.fire({classNumber : '5385', termCode : '1040', hideAddToCartButton : 'false'})">
+            W
+            <br />
+            <div class="randomDates">
+            </div>
+        </td>
+        <td class="classMeetingTimes"
+            onclick="YAHOO.mis.student.Topics.showClassDetailPanel.fire({classNumber : '5385', termCode : '1040', hideAddToCartButton : 'false'})">
+            03:00p - 04:30p
+            <br />
+            <div class="randomDates">
+                01/11/2025 - 03/15/2025
+            </div>
+        </td>
+        <td class="classBuilding"
+            onclick="YAHOO.mis.student.Topics.showClassDetailPanel.fire({classNumber : '5385', termCode : '1040', hideAddToCartButton : 'false'})">
+        </td>
+        <td class="classInstructor"
+            onclick="YAHOO.mis.student.Topics.showClassDetailPanel.fire({classNumber : '5385', termCode : '1040', hideAddToCartButton : 'false'})">
+            Rasiah, Pratheepa kumari |
+
+            Dong, Han
+        </td>
+        <td class="classActions">
+            <div class="classActionButtons">
+            </div>
+        </td>
+    </tr>
+    <tr class="odd" id="addClassSectionToCart_classSectionListRow_3_notes">
+        <td colspan="9">
+            <strong>
+                Note:
+            </strong>
+            Lights, Camera, Vision is a course that delves into the fascinating realm of optics, photonics, and the
+            intricate workings of the human visual system. This course explores the fundamental principles behind light,
+            its interaction with optical components, and how the human eye enables vision. Students will gain an
+            in-depth
+            understanding of optical phenomena, technologies, and the science of vision, laying the foundation for
+            applications in various fields such as optics, photography, and vision science through engaging experiments
+            and
+            captivating demonstrations.  
+
+            For first-year students only; upper division students may enroll with permission from the professor.
+        </td>
+    </tr>
+    <!-- Close the classDetail table if this is the last section in the class -->
+    <!-- This is just to avoid validation errors... -->
+</table>
+<table border="0" cellpadding="0" cellspacing="0" class="subjectFooter" width="100%">
+    <tr>
+        <td>
+        </td>
+    </tr>
+</table>
+
+
+
+
+
+
+
+
+
+
+<!-- NOTE: START OF A SERIES OF LISTINGS OF THE SAME CLASS -->
+
+<!--======================== Subject Area Information - only displayed if a different one than the last ========================-->
+<!--======================== Course Information - only displayed if a different one than the last ========================-->
+<table class="classTable">
+    <tr>
+        <td class="classHeader" colspan="9">
+            <div class="classHeaderRounded classHeaderRounded_addClassSectionToCart_div">
+                <div class="left">
+                    <span class="classAbbreviation">
+                        ES 2100W:
+                    </span>
+                    <span class="classDescription">
+                        Technical Communications
+                    </span>
+                </div>
+                <div class="clear">
+                </div>
+            </div>
+        </td>
+    </tr>
+    <!--======================== Table "shims" - ancient way to prevent table cells from getting smaller than desired ========================-->
+    <tr class="classTableShim">
+        <td width="1%">
+            <img border="0" height="1" src="https://static-assets.app.vanderbilt.edu/academic/more/ss/images/empty.gif"
+                width="15" />
+        </td>
+        <td width="1%">
+            <img border="0" height="1" src="https://static-assets.app.vanderbilt.edu/academic/more/ss/images/empty.gif"
+                width="80" />
+        </td>
+        <td width="23%">
+            <img border="0" height="1" src="https://static-assets.app.vanderbilt.edu/academic/more/ss/images/empty.gif"
+                width="125" />
+        </td>
+        <td width="1%">
+            <img border="0" height="1" src="https://static-assets.app.vanderbilt.edu/academic/more/ss/images/empty.gif"
+                width="30" />
+        </td>
+        <td width="1%">
+            <img border="0" height="1" src="https://static-assets.app.vanderbilt.edu/academic/more/ss/images/empty.gif"
+                width="60" />
+        </td>
+        <td width="23%">
+            <img border="0" height="1" src="https://static-assets.app.vanderbilt.edu/academic/more/ss/images/empty.gif"
+                width="125" />
+        </td>
+        <td width="23%">
+            <img border="0" height="1" src="https://static-assets.app.vanderbilt.edu/academic/more/ss/images/empty.gif"
+                width="195" />
+        </td>
+        <td width="24%">
+            <img border="0" height="1" src="https://static-assets.app.vanderbilt.edu/academic/more/ss/images/empty.gif"
+                width="160" />
+        </td>
+        <td width="1%">
+            <img border="0" height="1" src="https://static-assets.app.vanderbilt.edu/academic/more/ss/images/empty.gif"
+                width="55" />
+        </td>
+    </tr>
+    <!--====================================== Class Section Information - always displayed ====================================-->
+    <tr class="even classRow" id="addClassSectionToCart_classSectionListRow_4_header">
+        <td class="classSection" id="classNumber_4394"
+            onclick="YAHOO.mis.student.Topics.showClassDetailPanel.fire({classNumber : '4394', termCode : '1040', hideAddToCartButton : 'false'})">
+            01
+        </td>
+        <td class="classHours"
+            onclick="YAHOO.mis.student.Topics.showClassDetailPanel.fire({classNumber : '4394', termCode : '1040', hideAddToCartButton : 'false'})">
+            3.0 hrs
+        </td>
+        <td class="classType"
+            onclick="YAHOO.mis.student.Topics.showClassDetailPanel.fire({classNumber : '4394', termCode : '1040', hideAddToCartButton : 'false'})">
+            Lecture
+        </td>
+        <td class="classAvailability"
+            onclick="YAHOO.mis.student.Topics.showClassDetailPanel.fire({classNumber : '4394', termCode : '1040', hideAddToCartButton : 'false'})">
+            <a class="waitlistStatus" href="javascript:void(0);" id="linkaddClassSectionToCart_classSectionListRow_4">
+                4/5
+            </a>
+            <script type="text/javascript">
+                YAHOO.util.Event.onDOMReady(function () {
+                    YAHOO.util.Event.on('linkaddClassSectionToCart_classSectionListRow_4', 'mouseover', function () {
+                        BundleLib.showHelp('paneladdClassSectionToCart_classSectionListRow_4', 'linkaddClassSectionToCart_classSectionListRow_4');
+                    });
+                    YAHOO.util.Event.on('linkaddClassSectionToCart_classSectionListRow_4', 'mouseout', function () {
+                        BundleLib.hideHelp('paneladdClassSectionToCart_classSectionListRow_4');
+                    });
+                });
+            </script>
+            <div class="helpPanel hidden" id="paneladdClassSectionToCart_classSectionListRow_4">
+                <div class="helpBody">
+                    4 of 5, 1 wait list space(s) available
+                </div>
+                <div class="helpFooter">
+                </div>
+            </div>
+        </td>
+        <td class="classMeetingDays"
+            onclick="YAHOO.mis.student.Topics.showClassDetailPanel.fire({classNumber : '4394', termCode : '1040', hideAddToCartButton : 'false'})">
+            MWF
+            <br />
+        </td>
+        <td class="classMeetingTimes"
+            onclick="YAHOO.mis.student.Topics.showClassDetailPanel.fire({classNumber : '4394', termCode : '1040', hideAddToCartButton : 'false'})">
+            10:10a - 11:00a
+            <br />
+        </td>
+        <td class="classBuilding"
+            onclick="YAHOO.mis.student.Topics.showClassDetailPanel.fire({classNumber : '4394', termCode : '1040', hideAddToCartButton : 'false'})">
+        </td>
+        <td class="classInstructor"
+            onclick="YAHOO.mis.student.Topics.showClassDetailPanel.fire({classNumber : '4394', termCode : '1040', hideAddToCartButton : 'false'})">
+            Johnson, Courtney L.
+        </td>
+        <td class="classActions">
+            <div class="classActionButtons">
+            </div>
+        </td>
+    </tr>
+    <!-- Close the classDetail table if this is the last section in the class -->
+
+    <!--======================== Subject Area Information - only displayed if a different one than the last ========================-->
+    <!--======================== Course Information - only displayed if a different one than the last ========================-->
+    <!--====================================== Class Section Information - always displayed ====================================-->
+    <tr class="odd classRow" id="addClassSectionToCart_classSectionListRow_5_header">
+        <td class="classSection" id="classNumber_4395"
+            onclick="YAHOO.mis.student.Topics.showClassDetailPanel.fire({classNumber : '4395', termCode : '1040', hideAddToCartButton : 'false'})">
+            02
+        </td>
+        <td class="classHours"
+            onclick="YAHOO.mis.student.Topics.showClassDetailPanel.fire({classNumber : '4395', termCode : '1040', hideAddToCartButton : 'false'})">
+            3.0 hrs
+        </td>
+        <td class="classType"
+            onclick="YAHOO.mis.student.Topics.showClassDetailPanel.fire({classNumber : '4395', termCode : '1040', hideAddToCartButton : 'false'})">
+            Lecture
+        </td>
+        <td class="classAvailability"
+            onclick="YAHOO.mis.student.Topics.showClassDetailPanel.fire({classNumber : '4395', termCode : '1040', hideAddToCartButton : 'false'})">
+            <a class="closedStatus" href="javascript:void(0);" id="linkaddClassSectionToCart_classSectionListRow_5">
+                24/24
+            </a>
+            <script type="text/javascript">
+                YAHOO.util.Event.onDOMReady(function () {
+                    YAHOO.util.Event.on('linkaddClassSectionToCart_classSectionListRow_5', 'mouseover', function () {
+                        BundleLib.showHelp('paneladdClassSectionToCart_classSectionListRow_5', 'linkaddClassSectionToCart_classSectionListRow_5');
+                    });
+                    YAHOO.util.Event.on('linkaddClassSectionToCart_classSectionListRow_5', 'mouseout', function () {
+                        BundleLib.hideHelp('paneladdClassSectionToCart_classSectionListRow_5');
+                    });
+                });
+            </script>
+            <div class="helpPanel hidden" id="paneladdClassSectionToCart_classSectionListRow_5">
+                <div class="helpBody">
+                    Class is closed
+                </div>
+                <div class="helpFooter">
+                </div>
+            </div>
+        </td>
+        <td class="classMeetingDays"
+            onclick="YAHOO.mis.student.Topics.showClassDetailPanel.fire({classNumber : '4395', termCode : '1040', hideAddToCartButton : 'false'})">
+            MWF
+            <br />
+        </td>
+        <td class="classMeetingTimes"
+            onclick="YAHOO.mis.student.Topics.showClassDetailPanel.fire({classNumber : '4395', termCode : '1040', hideAddToCartButton : 'false'})">
+            11:15a - 12:05p
+            <br />
+        </td>
+        <td class="classBuilding"
+            onclick="YAHOO.mis.student.Topics.showClassDetailPanel.fire({classNumber : '4395', termCode : '1040', hideAddToCartButton : 'false'})">
+        </td>
+        <td class="classInstructor"
+            onclick="YAHOO.mis.student.Topics.showClassDetailPanel.fire({classNumber : '4395', termCode : '1040', hideAddToCartButton : 'false'})">
+            Johnson, Courtney L.
+        </td>
+        <td class="classActions">
+            <div class="classActionButtons">
+            </div>
+        </td>
+    </tr>
+    <!-- Close the classDetail table if this is the last section in the class -->
+
+    <!--======================== Subject Area Information - only displayed if a different one than the last ========================-->
+    <!--======================== Course Information - only displayed if a different one than the last ========================-->
+    <!--====================================== Class Section Information - always displayed ====================================-->
+    <tr class="even classRow" id="addClassSectionToCart_classSectionListRow_6_header">
+        <td class="classSection" id="classNumber_4396"
+            onclick="YAHOO.mis.student.Topics.showClassDetailPanel.fire({classNumber : '4396', termCode : '1040', hideAddToCartButton : 'false'})">
+            03
+        </td>
+        <td class="classHours"
+            onclick="YAHOO.mis.student.Topics.showClassDetailPanel.fire({classNumber : '4396', termCode : '1040', hideAddToCartButton : 'false'})">
+            3.0 hrs
+        </td>
+        <td class="classType"
+            onclick="YAHOO.mis.student.Topics.showClassDetailPanel.fire({classNumber : '4396', termCode : '1040', hideAddToCartButton : 'false'})">
+            Lecture
+        </td>
+        <td class="classAvailability"
+            onclick="YAHOO.mis.student.Topics.showClassDetailPanel.fire({classNumber : '4396', termCode : '1040', hideAddToCartButton : 'false'})">
+            <a class="closedStatus" href="javascript:void(0);" id="linkaddClassSectionToCart_classSectionListRow_6">
+                24/24
+            </a>
+            <script type="text/javascript">
+                YAHOO.util.Event.onDOMReady(function () {
+                    YAHOO.util.Event.on('linkaddClassSectionToCart_classSectionListRow_6', 'mouseover', function () {
+                        BundleLib.showHelp('paneladdClassSectionToCart_classSectionListRow_6', 'linkaddClassSectionToCart_classSectionListRow_6');
+                    });
+                    YAHOO.util.Event.on('linkaddClassSectionToCart_classSectionListRow_6', 'mouseout', function () {
+                        BundleLib.hideHelp('paneladdClassSectionToCart_classSectionListRow_6');
+                    });
+                });
+            </script>
+            <div class="helpPanel hidden" id="paneladdClassSectionToCart_classSectionListRow_6">
+                <div class="helpBody">
+                    Class is closed
+                </div>
+                <div class="helpFooter">
+                </div>
+            </div>
+        </td>
+        <td class="classMeetingDays"
+            onclick="YAHOO.mis.student.Topics.showClassDetailPanel.fire({classNumber : '4396', termCode : '1040', hideAddToCartButton : 'false'})">
+            TR
+            <br />
+        </td>
+        <td class="classMeetingTimes"
+            onclick="YAHOO.mis.student.Topics.showClassDetailPanel.fire({classNumber : '4396', termCode : '1040', hideAddToCartButton : 'false'})">
+            02:45p - 04:00p
+            <br />
+        </td>
+        <td class="classBuilding"
+            onclick="YAHOO.mis.student.Topics.showClassDetailPanel.fire({classNumber : '4396', termCode : '1040', hideAddToCartButton : 'false'})">
+        </td>
+        <td class="classInstructor"
+            onclick="YAHOO.mis.student.Topics.showClassDetailPanel.fire({classNumber : '4396', termCode : '1040', hideAddToCartButton : 'false'})">
+            Johnson, Courtney L.
+        </td>
+        <td class="classActions">
+            <div class="classActionButtons">
+            </div>
+        </td>
+    </tr>
+    <!-- Close the classDetail table if this is the last section in the class -->
