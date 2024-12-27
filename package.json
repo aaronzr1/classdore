@@ -1,0 +1,25 @@
+{
+  "name": "classdore",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aaronzr1/classdore.git"
+  },
+  "keywords": [],
+  "author": "Aaron Liu",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/aaronzr1/classdore/issues"
+  },
+  "homepage": "https://github.com/aaronzr1/classdore#readme",
+  "description": "",
+  "dependencies": {
+    "express": "^4.21.2",
+    "nodemon": "^3.1.9"
+  }
+}

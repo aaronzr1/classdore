@@ -1,0 +1,17 @@
+# macOS
+.DS_Store
+
+# node.js dependencies
+node_modules/
+
+# python
+*.pyc
+*.pyo
+__pycache__/
+
+# env
+.env    # env variables
+env/    # python virtual env
+
+# scraper
+*.csv
