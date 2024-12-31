@@ -9,9 +9,9 @@ node_modules/
 *.pyo
 __pycache__/
 
-# env
-.env    # env variables
-venv/    # python virtual env
+# env variables, python virtual env
+.env
+venv/
 
 # scraper
 *.csv
