@@ -1,12 +1,6 @@
-# implementation details:
-    # we search 3-digit codes from 000 to 999
-    # this will give some duplicate results, ex. 3140 popping up in both "140" and "314"
-    # we assume that no search results exceed 300 (this is max number of records retreivable at a time)
-    # this means we have to check for a maximum of 6 pages
-
-import requests
+import requests, re, json, argparse
 from bs4 import BeautifulSoup
-import re
+from tqdm import tqdm
 
 def findTotalRecords(soup):
 
@@ -20,7 +14,6 @@ def findTotalRecords(soup):
     int: total number of records
     """
 
-    # find "<script>"" tag containing "totalRecords"
     script_tag = soup.find('script', string=re.compile('totalRecords'))
 
     total_records = 0
@@ -42,38 +35,253 @@ def fetch(url):
     BeautifulSoup object: extracted info from url
     """
 
-    # use same session to allow page switching
-    session = requests.Session()
+    session = requests.Session() # use same session to allow page switching
 
-    # extract response and content from given url
     response = session.get(url)
     content = response.content
     
-    # extract total records from given search result
     total_records = findTotalRecords(BeautifulSoup(content, "lxml"))
-    if total_records == 300: print("NOTE: MAX RECORD COUNT HIT")
+    if total_records == 300: print("NOTE: MAX RECORD COUNT HIT WITH URL", url)
 
-    # calculate additional pages to check: 0-50 records means 0, 51-100 means 1, ...
+    # 0-50 records means no additional pages, 51-100 means 1 additional page, etc.
     additional_pages = max(0, total_records // 50 - (not (total_records % 50))) # note 0 gives -1
-    
-    # append content from additional pages
     pageUrl = "https://more.app.vanderbilt.edu/more/SearchClassesExecute!switchPage.action?pageNum="
+
     for i in range(additional_pages):
-        add_response = session.get(pageUrl + str(i + 1))
+        add_response = session.get(pageUrl + str(i + 2))
         content += add_response.content
     
     soup = BeautifulSoup(content, "lxml")
     return soup
+
+def scrape_listings_for_keyword(soup):
+    # find all <td> with "classNumber_" in id
+    listing_elements = soup.find_all('td', id=lambda x: x and x.startswith("classNumber_"))
+
+    new_data = []
+    for listing in listing_elements:
+        onclick_text = listing.get('onclick', '')
+        
+        class_number, term_code = None, None
+        if "classNumber" in onclick_text and "termCode" in onclick_text:
+            class_number = onclick_text.split("classNumber : '")[1].split("'")[0]
+            term_code = onclick_text.split("termCode : '")[1].split("'")[0]
+        
+        if class_number and term_code:
+            new_data.append({'classNumber': class_number, 'termCode': term_code})
     
+    return new_data
 
-# subject-specific url:
-"""
-url = "https://more.app.vanderbilt.edu/more/SearchClassesExecute!search.action?searchCriteria.subjectAreaCodes=CS"
-"""
+def update_course_listings(new_data):
 
-# finding all links on the page
-"""
-links = soup.find_all("a")
-for link in links:
-    print(link.get("href"))
-"""
+    # load existing data
+    try:
+        with open('course_listings.json', 'r') as file:
+            existing_data = json.load(file)
+    except FileNotFoundError:
+        existing_data = []
+
+    # duplicate detection
+    existing_set = set((entry["classNumber"], entry["termCode"]) for entry in existing_data)
+
+    # add unique entries
+    for entry in new_data:
+        pair = (entry["classNumber"], entry["termCode"])
+        if pair not in existing_set:
+            existing_data.append(entry)
+            existing_set.add(pair)
+
+    with open('course_listings.json', 'w') as file:
+        json.dump(existing_data, file, indent=4)
+
+def iterate_keywords():
+    base_url = "https://more.app.vanderbilt.edu/more/SearchClassesExecute!search.action?keywords="
+
+    edges = [100, 110, 385, 799, 850, 899] # keywords that have over 300 entries (gets truncated)
+    # skip *999 series since it's mostly phd dissertation research (7999, 8999, 9999 have 300+ each)
+    for i in tqdm(range(999), desc="Generating course listings", unit="keyword"):
+
+        if i in edges:
+            addons = [str(j) + f"{i:03d}" for j in range(10)]
+        else:
+            addons = [f"{i:03d}"]
+
+        for addon in addons:
+            url = base_url + addon
+
+            response = requests.get(url)
+            content = response.content
+
+            total_records = findTotalRecords(BeautifulSoup(content, "lxml"))
+
+            try:
+                soup = fetch(url)
+                new_data = scrape_listings_for_keyword(soup)
+                update_course_listings(new_data)
+            except:
+                print(f"error scraping listings for keyword '{addon}'")
+
+def extract_class_details(soup):
+    header = soup.find("h1").text.strip()
+    parts = header.strip().split(":", 1)
+    dept_code, course_title = parts[0].split("-"), parts[1].strip()
+
+    course_dept, course_code, class_section = dept_code[0], dept_code[1], dept_code[2].strip()
+    return course_dept, course_code, class_section, course_title
+
+def extract_other_details(soup):
+    details_table = soup.find("table", class_="nameValueTable")
+    
+    # left side details
+    school = details_table.find("td", string="School:").find_next_sibling("td").text.strip()
+    career = details_table.find("td", string="Career:").find_next_sibling("td").text.strip()
+    class_type = details_table.find("td", string="Component:").find_next_sibling("td").text.strip()
+    credit_hours = details_table.find("td", string="Hours:").find_next_sibling("td").text.strip()
+    grading_basis = details_table.find("td", string="Grading Basis:").find_next_sibling("td").text.strip()
+    consent = details_table.find("td", string="Consent:").find_next_sibling("td").text.strip()
+
+    # right side details
+    term = details_table.find("td", string="Term:").find_next_sibling("td").text.strip()
+    term_year, term_season = term.split(" ")
+    session = details_table.find("td", string="Session:").find_next_sibling("td").text.strip()
+    dates = details_table.find("td", string="Session Dates:").find_next_sibling("td").text.strip()
+    requirements = details_table.find("td", string="Requirement(s):").find_next_sibling("td").text.strip()
+
+    return school, career, class_type, credit_hours, grading_basis, consent, term_year, term_season, session, dates, requirements
+
+def extract_desc_and_notes(soup):
+    description_div = soup.find("div", class_="detailHeader", string=lambda text: "Description" in text)
+    description = description_div.find_next_sibling("div").text.strip() if description_div else None
+
+    notes_div = soup.find("div", class_="detailHeader", string=lambda text: "Notes" in text)
+    notes = notes_div.find_next_sibling("div").text.strip() if notes_div else None
+
+    return description, notes
+
+def extract_availability(soup):
+    availability_table = soup.find("table", class_="availabilityNameValueTable")
+    status = soup.find("div", class_="availabiltyIndicator").find("span").text.strip()
+    capacity = availability_table.find("td", string="Class Capacity:").find_next_sibling("td").text.strip()
+    enrolled = availability_table.find("td", string="Total Enrolled:").find_next_sibling("td").text.strip()
+    wl_capacity = availability_table.find("td", string="Wait List Capacity:").find_next_sibling("td").text.strip()
+    wl_occupied = availability_table.find("td", string="Total on Wait List:").find_next_sibling("td").text.strip()
+
+    return {
+        "status": status,
+        "capacity": capacity,
+        "enrolled": enrolled,
+        "wl_capacity": wl_capacity,
+        "wl_occupied": wl_occupied,
+    }
+
+def extract_attributes(soup):
+    attributes_div = soup.find("div", class_="detailHeader", string=lambda text: "Attributes" in text)
+    attributes = [item.text.strip() for item in attributes_div.find_next_sibling("div").find_all("div", class_="listItem")] if attributes_div else None
+    return attributes
+
+def extract_meetings_and_instructors(soup):
+    meeting_table = soup.find("table", class_="meetingPatternTable")
+    meetings = []
+    
+    for row in meeting_table.find_all("tr")[1:]:
+        columns = row.find_all("td")
+        meeting_days = columns[0].text.strip()
+        meeting_time = columns[1].text.strip()
+        meeting_dates = columns[3].text.strip()
+        instructors = [inst.text.strip() for inst in columns[4].find_all("div")]
+        meetings.append({
+            "meeting_days": meeting_days,
+            "meeting_time": meeting_time,
+            "meeting_dates": meeting_dates,
+            "instructors": instructors,
+        })
+    return meetings
+
+def scrape_course_details(soup):
+
+    class_number = soup.find("div", class_="classNumber").text.split(":")[1].strip()
+    course_dept, course_code, class_section, course_title = extract_class_details(soup)
+    school, career, class_type, credit_hours, grading_basis, consent, term_year, term_season, session, dates, requirements = extract_other_details(soup)
+    description, notes = extract_desc_and_notes(soup)
+    availability = extract_availability(soup)
+    attributes = extract_attributes(soup)
+    meetings = extract_meetings_and_instructors(soup)
+
+    current_data = {
+        "course_dept": course_dept,
+        "course_code": course_code,
+        "class_section": class_section,
+        "course_title": course_title,
+        "school": school,
+        "career": career,
+        "class_type": class_type,
+        "credit_hours": credit_hours,
+        "grading_basis": grading_basis,
+        "consent": consent,
+        "term_year": term_year,
+        "term_season": term_season,
+        "session": session,
+        "dates": dates,
+        "requirements": requirements,
+        "description": description,
+        "notes": notes,
+        "availability": availability,
+        "attributes": attributes,
+        "meeting": meetings,
+    }
+
+    return class_number, current_data
+
+def update_course_details(class_number, new_data):
+
+    # load existing data
+    try:
+        with open('data.json', 'r') as file:
+            existing_data = json.load(file)
+    except FileNotFoundError:
+        existing_data = {}
+        
+    if class_number in existing_data:
+        existing_data[class_number].update(new_data)
+    else:
+        existing_data[class_number] = new_data
+    
+    with open('data.json', 'w') as file:
+        json.dump(existing_data, file, indent=4)
+
+def iterate_listings():
+    with open('course_listings.json', 'r') as file:
+        data = json.load(file)
+
+    base_url = "https://more.app.vanderbilt.edu/more/GetClassSectionDetail.action?classNumber="
+    for listing in tqdm(data, desc="Scraping data", unit="listing"):
+        url = base_url + f"{listing['classNumber']}&termCode={listing['termCode']}"
+        try:
+            soup = fetch(url)
+            class_number, current_data = scrape_course_details(soup)
+            update_course_details(class_number, current_data)
+        except:
+            print(f"error scraping details for listing '{listing}'")
+
+def main():
+    parser = argparse.ArgumentParser(description="Scrape course listings and details.")
+    
+    parser.add_argument('-l', '--listings', action='store_true', help="Scrape course listings only")
+    parser.add_argument('-d', '--details', action='store_true', help="Scrape course details only")
+    
+    args = parser.parse_args()
+
+    # If neither flag is passed, run both functions
+    if not (args.listings or args.details):
+        iterate_keywords()
+        iterate_listings()
+    else:
+        if args.listings:
+            iterate_keywords()
+
+        if args.details:
+            iterate_listings()
+
+
+if __name__ == "__main__":
+    main()
