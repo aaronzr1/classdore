@@ -76,7 +76,7 @@ def update_course_listings(new_data):
 
     # load existing data
     try:
-        with open('course_listings.json', 'r') as file:
+        with open('data/course_listings.json', 'r') as file:
             existing_data = json.load(file)
     except FileNotFoundError:
         existing_data = []
@@ -91,7 +91,7 @@ def update_course_listings(new_data):
             existing_data.append(entry)
             existing_set.add(pair)
 
-    with open('course_listings.json', 'w') as file:
+    with open('data/course_listings.json', 'w') as file:
         json.dump(existing_data, file, indent=4)
 
 def iterate_keywords():
@@ -185,6 +185,7 @@ def extract_meetings_and_instructors(soup):
     
     for row in meeting_table.find_all("tr")[1:]:
         columns = row.find_all("td")
+        if len(columns) < 4: continue # probably bad data
         meeting_days = columns[0].text.strip()
         meeting_time = columns[1].text.strip()
         meeting_dates = columns[3].text.strip()
@@ -236,7 +237,7 @@ def update_course_details(class_number, new_data):
 
     # load existing data
     try:
-        with open('data.json', 'r') as file:
+        with open('data/data.json', 'r') as file:
             existing_data = json.load(file)
     except FileNotFoundError:
         existing_data = {}
@@ -246,11 +247,11 @@ def update_course_details(class_number, new_data):
     else:
         existing_data[class_number] = new_data
     
-    with open('data.json', 'w') as file:
+    with open('data/data.json', 'w') as file:
         json.dump(existing_data, file, indent=4)
 
 def iterate_listings():
-    with open('course_listings.json', 'r') as file:
+    with open('data/course_listings.json', 'r') as file:
         data = json.load(file)
 
     base_url = "https://more.app.vanderbilt.edu/more/GetClassSectionDetail.action?classNumber="

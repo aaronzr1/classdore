@@ -13,5 +13,11 @@ __pycache__/
 .env
 venv/
 
+# ts
+dist
+
+# redis
+dump.rdb
+
 # scraper
-save/
+data/
