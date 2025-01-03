@@ -1,10 +1,11 @@
 import mongoose from 'mongoose';
-import dotenv from 'dotenv';
-import fs from 'fs';
+import * as dotenv from 'dotenv';
+import * as fs from 'fs';
 import { Course } from './course.model';
-import Redis from 'ioredis';
+const { createClient } = require('redis');
+// import Redis from 'ioredis'
 
-dotenv.config({ path: '../.env' });
+dotenv.config();
 
 mongoose.connect(process.env.MONGO_URI || '')
     .then(() => {
@@ -68,7 +69,7 @@ const uploadData = async () => {
     }
 };
 
-let write = true;
+let write = false;
 let del = false;
 
 if (write && !del) uploadData();
@@ -110,7 +111,16 @@ const getAllCourses = async () => {
 
 // getAllCourses();
 
-const redis = new Redis();
+const redis = createClient({
+    username: 'default',
+    password: process.env.REDIS_PSW,
+    socket: {
+        host: 'redis-15815.c322.us-east-1-2.ec2.redns.redis-cloud.com',
+        port: 15815
+    }
+});
+redis.on('error', (err: any) => console.log('Redis Client Error', err));
+
 // redis.set('searchQuery', JSON.stringify(courseData));  // Example for caching search data
 const storeCourseInRedis = async (classNumber: string) => {
     try {
@@ -149,6 +159,7 @@ const storeAllCoursesInRedis = async () => {
     try {
         const courses = await Course.find();
         // Serialize array of courses
+        await redis.connect();
         await redis.set('all_courses', JSON.stringify(courses));
         console.log('All courses stored in Redis');
     } catch (error) {
@@ -176,7 +187,7 @@ const removeAllCourses = async () => {
 };
 
 // Example usage: remove all courses
-removeAllCourses();
+// removeAllCourses();
 
 // Retrieve all courses from Redis
 const getAllCoursesFromRedis = async () => {
