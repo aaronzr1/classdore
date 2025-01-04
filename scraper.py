@@ -209,6 +209,7 @@ def scrape_course_details(soup):
     meetings = extract_meetings_and_instructors(soup)
 
     current_data = {
+        "class_number": class_number,
         "course_dept": course_dept,
         "course_code": course_code,
         "class_section": class_section,
@@ -231,36 +232,39 @@ def scrape_course_details(soup):
         "meeting": meetings,
     }
 
-    return class_number, current_data
+    return current_data
 
-def update_course_details(class_number, new_data):
+def update_course_details(new_data):
 
     # load existing data
     try:
         with open('data/data.json', 'r') as file:
             existing_data = json.load(file)
     except FileNotFoundError:
-        existing_data = {}
-        
-    if class_number in existing_data:
-        existing_data[class_number].update(new_data)
-    else:
-        existing_data[class_number] = new_data
+        existing_data = []
+    
+    # convert to dict for easy saving
+    existing_data_dict = {entry["class_number"]: entry for entry in existing_data}
+    class_number = new_data["class_number"]
+    existing_data_dict[class_number] = new_data # update or append
+
+    # back to list for saving
+    updated_data = list(existing_data_dict.values())
     
     with open('data/data.json', 'w') as file:
-        json.dump(existing_data, file, indent=4)
+        json.dump(updated_data, file, indent=4)
 
 def iterate_listings():
     with open('data/course_listings.json', 'r') as file:
         data = json.load(file)
-
+    
     base_url = "https://more.app.vanderbilt.edu/more/GetClassSectionDetail.action?classNumber="
     for listing in tqdm(data, desc="Scraping data", unit="listing"):
         url = base_url + f"{listing['classNumber']}&termCode={listing['termCode']}"
         try:
             soup = fetch(url)
-            class_number, current_data = scrape_course_details(soup)
-            update_course_details(class_number, current_data)
+            current_data = scrape_course_details(soup)
+            update_course_details(current_data)
         except:
             print(f"error scraping details for listing '{listing}'")
 

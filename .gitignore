@@ -20,4 +20,6 @@ dist
 dump.rdb
 
 # scraper
-data/
+data/**
+
+!**/.gitkeep

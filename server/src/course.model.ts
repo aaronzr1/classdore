@@ -1,4 +1,5 @@
 import mongoose, { Document, Schema } from 'mongoose';
+import { SchemaFieldTypes } from 'redis';
 
 export interface ICourse extends Document {
     class_number: string;
@@ -74,3 +75,106 @@ const courseSchema = new Schema<ICourse>({
 }, { minimize: false });
 
 export const Course = mongoose.model<ICourse>('Course', courseSchema);
+
+export const redisCourseSchema = {
+    '$.class_number': {
+        type: SchemaFieldTypes.TEXT,
+        AS: 'class_number'
+    },
+    '$.course_dept': {
+        type: SchemaFieldTypes.TEXT,
+        AS: 'course_dept'
+    },
+    '$.course_code': {
+        type: SchemaFieldTypes.TEXT,
+        AS: 'course_code'
+    },
+    '$.class_section': {
+        type: SchemaFieldTypes.TEXT,
+        AS: 'class_section'
+    },
+    '$.course_title': {
+        type: SchemaFieldTypes.TEXT,
+        AS: 'course_title'
+    },
+    '$.school': {
+        type: SchemaFieldTypes.TEXT,
+        AS: 'school'
+    },
+    '$.career': {
+        type: SchemaFieldTypes.TEXT,
+        AS: 'career'
+    },
+    '$.class_type': {
+        type: SchemaFieldTypes.TEXT,
+        AS: 'class_type'
+    },
+    '$.credit_hours': {
+        type: SchemaFieldTypes.TEXT,
+        AS: 'credit_hours'
+    },
+    '$.grading_basis': {
+        type: SchemaFieldTypes.TEXT,
+        AS: 'grading_basis'
+    },
+    '$.consent': {
+        type: SchemaFieldTypes.TEXT,
+        AS: 'consent'
+    },
+    '$.term_year': {
+        type: SchemaFieldTypes.NUMERIC,
+        AS: 'term_year'
+    },
+    '$.term_season': {
+        type: SchemaFieldTypes.TEXT,
+        AS: 'term_season'
+    },
+    '$.session': {
+        type: SchemaFieldTypes.TEXT,
+        AS: 'session'
+    },
+    '$.dates': {
+        type: SchemaFieldTypes.TEXT,
+        AS: 'dates'
+    },
+    '$.requirements': {
+        type: SchemaFieldTypes.TEXT,
+        AS: 'requirements'
+    },
+    '$.description': {
+        type: SchemaFieldTypes.TEXT,
+        AS: 'description'
+    },
+    '$.notes': {
+        type: SchemaFieldTypes.TEXT,
+        AS: 'notes'
+    },
+    '$.availability.status': {
+        type: SchemaFieldTypes.TEXT,
+        AS: 'availability_status'
+    },
+    '$.availability.capacity': {
+        type: SchemaFieldTypes.NUMERIC,
+        AS: 'availability_capacity'
+    },
+    '$.availability.enrolled': {
+        type: SchemaFieldTypes.NUMERIC,
+        AS: 'availability_enrolled'
+    },
+    '$.availability.wl_capacity': {
+        type: SchemaFieldTypes.NUMERIC,
+        AS: 'availability_wl_capacity'
+    },
+    '$.availability.wl_occupied': {
+        type: SchemaFieldTypes.NUMERIC,
+        AS: 'availability_wl_occupied'
+    },
+    '$.attributes': {
+        type: SchemaFieldTypes.TAG,
+        AS: 'attributes'
+    },
+    '$.meeting': {
+        type: SchemaFieldTypes.TEXT,
+        AS: 'meeting'
+    }
+};
