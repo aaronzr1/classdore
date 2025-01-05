@@ -13,6 +13,12 @@ const uploadData = async () => {
         // relative to server/
         const data = JSON.parse(fs.readFileSync("../data/data.json", "utf-8"));
 
+        // data.forEach((courseData: any) => {
+        //     if (!courseData.meeting_times) {
+        //         console.log("Missing meeting_times for:", courseData.class_number);
+        //     }
+        // });
+
         const operations = data.map((courseData: any) => ({
             updateOne: {
                 filter: { class_number: courseData.class_number },
@@ -36,15 +42,22 @@ const uploadData = async () => {
                         requirements: courseData.requirements,
                         description: courseData.description,
                         notes: courseData.notes,
-                        availability: courseData.availability,
+                        status: courseData.status,
+                        capacity: parseInt(courseData.capacity),
+                        enrolled: parseInt(courseData.enrolled),
+                        wl_capacity: parseInt(courseData.wl_capacity),
+                        wl_occupied: parseInt(courseData.wl_occupied),
                         attributes: courseData.attributes,
-                        meeting: courseData.meeting
+                        meeting_days: courseData.meeting_days,
+                        meeting_times: courseData.meeting_times,
+                        meeting_dates: courseData.meeting_dates,
+                        instructors: courseData.instructors
                     },
                 },
                 upsert: true, // Create a new entry if none exists
             },
         }));
-        
+
         await Course.bulkWrite(operations, { ordered: false, writeConcern: { w: 1 } });
         console.log("Data successfully uploaded");
 
@@ -65,19 +78,19 @@ const verifyData = async () => {
 
 async function main() {
     try {
-        
+
         await mongoose.connect(process.env.MONGO_URI || "")
         console.log("Connected to MongoDB Atlas");
 
         if (del) {
             await deleteData()
-            await verifyData();
-        } else if (write) {
-            await uploadData()
-            await verifyData();
-        } else {
-            await verifyData();
         }
+
+        if (write) {
+            await uploadData()
+        }
+
+        await verifyData();
     } catch (err) {
         console.error("An error occurred:", err);
     } finally {

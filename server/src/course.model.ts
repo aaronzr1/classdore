@@ -1,7 +1,9 @@
 import mongoose, { Document, Schema } from 'mongoose';
 import { SchemaFieldTypes } from 'redis';
+import { ObjectId } from 'mongodb';
 
 export interface ICourse extends Document {
+    _id: ObjectId;
     class_number: string;
     course_dept: string;
     course_code: string;
@@ -20,20 +22,16 @@ export interface ICourse extends Document {
     requirements: string;
     description: string | null;
     notes: string | null;
-    availability: {
-        status: string;
-        capacity: number;
-        enrolled: number;
-        wl_capacity: number;
-        wl_occupied: number;
-    };
+    status: string;
+    capacity: number;
+    enrolled: number;
+    wl_capacity: number;
+    wl_occupied: number;
     attributes: string[] | null;
-    meeting: {
-        meeting_days: string;
-        meeting_time: string;
-        meeting_dates: string;
-        instructors: string[];
-    }[];
+    meeting_days: string[];
+    meeting_times: string[];
+    meeting_dates: string[];
+    instructors: string[];
 }
 
 const courseSchema = new Schema<ICourse>({
@@ -56,22 +54,16 @@ const courseSchema = new Schema<ICourse>({
     requirements: String,
     description: { type: String, default: null },
     notes: { type: String, default: null },
-    availability: {
-        status: String,
-        capacity: { type: Number, min: 0 },
-        enrolled: { type: Number, min: 0 },
-        wl_capacity: { type: Number, min: 0 },
-        wl_occupied: { type: Number, min: 0 }
-    },
+    status: String,
+    capacity: { type: Number, min: 0 },
+    enrolled: { type: Number, min: 0 },
+    wl_capacity: { type: Number, min: 0 },
+    wl_occupied: { type: Number, min: 0 },
     attributes: { type: [String], default: null },
-    meeting: [
-        {
-            meeting_days: String,
-            meeting_time: String,
-            meeting_dates: String,
-            instructors: [{ type: String }]
-        }
-    ]
+    meeting_days: [String],
+    meeting_times: [String],
+    meeting_dates: [String],
+    instructors: [String]
 }, { minimize: false });
 
 export const Course = mongoose.model<ICourse>('Course', courseSchema);

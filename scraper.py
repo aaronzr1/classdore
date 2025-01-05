@@ -166,13 +166,7 @@ def extract_availability(soup):
     wl_capacity = availability_table.find("td", string="Wait List Capacity:").find_next_sibling("td").text.strip()
     wl_occupied = availability_table.find("td", string="Total on Wait List:").find_next_sibling("td").text.strip()
 
-    return {
-        "status": status,
-        "capacity": capacity,
-        "enrolled": enrolled,
-        "wl_capacity": wl_capacity,
-        "wl_occupied": wl_occupied,
-    }
+    return status, capacity, enrolled, wl_capacity, wl_occupied
 
 def extract_attributes(soup):
     attributes_div = soup.find("div", class_="detailHeader", string=lambda text: "Attributes" in text)
@@ -180,23 +174,23 @@ def extract_attributes(soup):
     return attributes
 
 def extract_meetings_and_instructors(soup):
-    meeting_table = soup.find("table", class_="meetingPatternTable")
-    meetings = []
-    
-    for row in meeting_table.find_all("tr")[1:]:
-        columns = row.find_all("td")
-        if len(columns) < 4: continue # probably bad data
-        meeting_days = columns[0].text.strip()
-        meeting_time = columns[1].text.strip()
-        meeting_dates = columns[3].text.strip()
-        instructors = [inst.text.strip() for inst in columns[4].find_all("div")]
-        meetings.append({
-            "meeting_days": meeting_days,
-            "meeting_time": meeting_time,
-            "meeting_dates": meeting_dates,
-            "instructors": instructors,
-        })
-    return meetings
+    meeting_tables = soup.find_all("table", class_="meetingPatternTable")
+
+    meeting_days = []
+    meeting_times = []
+    meeting_dates = []
+    instructors = set()
+
+    for meeting_table in meeting_tables:
+        for row in meeting_table.find_all("tr")[1:]:
+            columns = row.find_all("td")
+            if len(columns) < 4: continue # probably bad data
+            meeting_days.append(columns[0].text.strip())
+            meeting_times.append(columns[1].text.strip())
+            meeting_dates.append(columns[3].text.strip())
+            for inst in columns[4].find_all("div"): instructors.add(inst.text.strip())
+
+    return meeting_days, meeting_times, meeting_dates, list(instructors)
 
 def scrape_course_details(soup):
 
@@ -204,10 +198,10 @@ def scrape_course_details(soup):
     course_dept, course_code, class_section, course_title = extract_class_details(soup)
     school, career, class_type, credit_hours, grading_basis, consent, term_year, term_season, session, dates, requirements = extract_other_details(soup)
     description, notes = extract_desc_and_notes(soup)
-    availability = extract_availability(soup)
+    status, capacity, enrolled, wl_capacity, wl_occupied = extract_availability(soup)
     attributes = extract_attributes(soup)
-    meetings = extract_meetings_and_instructors(soup)
-
+    meeting_days, meeting_times, meeting_dates, instructors = extract_meetings_and_instructors(soup)
+    
     current_data = {
         "class_number": class_number,
         "course_dept": course_dept,
@@ -227,9 +221,16 @@ def scrape_course_details(soup):
         "requirements": requirements,
         "description": description,
         "notes": notes,
-        "availability": availability,
+        'status': status,
+        'capacity': capacity,
+        'enrolled': enrolled,
+        'wl_capacity': wl_capacity,
+        'wl_occupied': wl_occupied,
         "attributes": attributes,
-        "meeting": meetings,
+        "meeting_days": meeting_days,
+        "meeting_times": meeting_times, 
+        "meeting_dates": meeting_dates, 
+        "instructors": instructors
     }
 
     return current_data
@@ -257,6 +258,11 @@ def update_course_details(new_data):
 def iterate_listings():
     with open('data/course_listings.json', 'r') as file:
         data = json.load(file)
+
+    # data =[{
+    #     "classNumber": "10582",
+    #     "termCode": "1040"
+    # }]
     
     base_url = "https://more.app.vanderbilt.edu/more/GetClassSectionDetail.action?classNumber="
     for listing in tqdm(data, desc="Scraping data", unit="listing"):
