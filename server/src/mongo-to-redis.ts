@@ -33,7 +33,7 @@ async function main() {
 
         client.on('error', (err: any) => console.log('Redis Client Error', err));
         await client.connect();
-        await client.flushDb(); // delete our hset
+        await client.flushDb(); // delete our data
 
         try {
             await client.ft.create('idx:course', {
@@ -264,53 +264,6 @@ async function main() {
 }
 
 main()
-
-// redis.set('searchQuery', JSON.stringify(courseData));  // Example for caching search data
-const storeCourseInRedis = async (classNumber: string) => {
-    try {
-        const course = await Course.findOne({ class_number: classNumber });
-
-        if (course) {
-            // Serialize course data to a string
-            await redis.set(classNumber, JSON.stringify(course));
-            console.log('Course stored in Redis');
-        } else {
-            console.log('Course not found');
-        }
-    } catch (error) {
-        console.error('Error retrieving and storing course:', error);
-    }
-};
-
-// Example usage
-// storeCourseInRedis('4755');
-
-const removeCourse = async (classNumber: string) => {
-    try {
-        // Remove the course from Redis using the class_number as the key
-        await redis.del(classNumber);
-        console.log(`Course with class_number ${classNumber} has been removed from Redis.`);
-    } catch (error) {
-        console.error('Error removing course from Redis:', error);
-    }
-};
-
-// Example usage: remove the course with class_number "4755"
-// removeCourse("4755");
-
-// Store all courses in Redis
-const storeAllCoursesInRedis = async () => {
-    try {
-        const courses = await Course.find();
-        // Serialize array of courses
-        await redis.connect();
-        await redis.set('all_courses', JSON.stringify(courses));
-        console.log('All courses stored in Redis');
-    } catch (error) {
-        console.error('Error retrieving and storing courses:', error);
-    }
-};
-// storeAllCoursesInRedis();
 
 // Remove all courses from Redis
 const removeAllCourses = async () => {

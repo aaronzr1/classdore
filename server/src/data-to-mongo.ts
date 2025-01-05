@@ -3,7 +3,7 @@ import * as dotenv from "dotenv";
 import * as fs from "fs";
 import { Course } from "./course.model";
 
-const write = false;
+const write = true;
 const del = false;
 
 dotenv.config();
