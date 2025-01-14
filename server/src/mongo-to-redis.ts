@@ -245,7 +245,7 @@ async function main() {
       });
     });
 
-    let result = await client.ft.search(
+    const result = await client.ft.search(
       'idx:course',
       '@description:*transport* @course_dept:MATH',
       {
