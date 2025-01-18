@@ -3,69 +3,116 @@ import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import { Course } from './course.model';
 import { createClient } from 'redis';
+import cors from 'cors';
 
 dotenv.config();
 
 const app = express();
 app.use(express.json());
 
+app.use(cors({
+    origin: 'http://localhost:5173',  // Allow only your frontend's URL
+}));
+
+app.get('/api', (req, res) => {
+    res.json({ message: "Hello from the backend!" });
+});
+
 app.get('/', (req, res) => {
-  res.send('ClassDore API');
+    res.send('ClassDore API');
 });
 
 const port = process.env.PORT || 3000;
 
 mongoose
-  .connect(process.env.MONGO_URI || '')
-  .then(() => {
-    console.error('Connected to MongoDB Atlas');
-  })
-  .catch((error) => {
-    console.error('Database connection failed:', error);
-  });
+    .connect(process.env.MONGO_URI || '')
+    .then(() => {
+        console.error('Connected to MongoDB Atlas');
+    })
+    .catch((error) => {
+        console.error('Database connection failed:', error);
+    });
 
 const client = createClient({
-  username: 'default',
-  password: process.env.REDIS_PSW,
-  socket: {
-    host: 'redis-15815.c322.us-east-1-2.ec2.redns.redis-cloud.com',
-    port: 15815,
-  },
+    username: 'default',
+    password: process.env.REDIS_PSW,
+    socket: {
+        host: 'redis-15815.c322.us-east-1-2.ec2.redns.redis-cloud.com',
+        port: 15815,
+    },
 });
 client.on('error', (err) => console.log('Redis Client Error', err));
 client.connect();
 
-app.get('/courses', async (req, res) => {
-  try {
-    // Get all course keys from Redis
-    const keys = await client.keys('*'); // Use '*' to get all keys
+app.get('/api/search', async (req: Request, res: Response) => {
 
-    if (keys.length === 0) {
-      res.status(404).json({ message: 'No courses found' });
-      return;
+    let keywords = Array.isArray(req.query.keywords)
+        ? req.query.keywords.join(' ').trim()
+        : typeof req.query.keywords === 'string'
+            ? req.query.keywords.trim()
+            : '';
+    let total = 0;
+    let ret = {};
+
+    const specialChars = /([@\-+~!{}()\[\]^"~*?:\\])/g;
+    keywords = keywords.replace(specialChars, '\\$1');
+
+    // TODO: allow for "" for exactness, and * for pre/suff/fix (override %)
+
+    let query = "*"; // Default query to match all documents
+    if (keywords && keywords.trim().length > 1) {
+        query = `*${keywords}*`; // Only modify the query if keywords are provided
     }
 
-    // Fetch all courses from Redis
-    const courses = await Promise.all(
-      keys.map(async (key) => {
-        const courseData = await client.get(key); // Get course data by key
-        if (courseData === null) {
-          return null;
-        }
-        return JSON.parse(courseData); // Parse the stored JSON data
-      })
-    );
 
-    // Send the courses as a JSON response
-    res.status(200).json(courses);
-  } catch (error) {
-    console.error('Error retrieving courses from Redis:', error);
-    res.status(500).json({ message: 'Internal server error' });
-  }
+    // parse each part of query, don't forget to trim()
+    const result = await client.ft.search(
+        'idx:course',
+        // '@description:accessible @course_dept:DS',
+        query,
+
+        // `@description:testing`,
+        {
+            LIMIT: {
+                from: 0,
+                size: 10000,
+            },
+        }
+    );
+    total = result["total"];
+    ret = result["documents"];
+
+    // console.log(ret)
+    res.json({ total: total, message: ret });
+});
+
+app.get('/api/courses', async (req, res) => {
+    try {
+
+        const keys = await client.keys('*');
+
+        if (keys.length === 0) {
+            res.status(404).json({ message: 'No courses found' });
+            return;
+        }
+
+        const data: Record<string, any> = {};
+        for (const key of keys) {
+            data[key] = await (client.json.get(key));
+        }
+
+        console.log('All data:', JSON.stringify(data));
+
+        res.json({ message: `${data}` });
+
+    } catch (error) {
+        console.error('Error retrieving courses from Redis:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
 });
 
 app.listen(port, () => {
-  console.log(`Server running on http://localhost:${port}`);
+    console.log(`Server running on http://localhost:${port}`);
 });
 
 // // using Redis

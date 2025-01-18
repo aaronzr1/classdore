@@ -157,7 +157,7 @@ async function main() {
         },
         {
           ON: 'JSON',
-          PREFIX: 'course',
+          PREFIX: 'course'
         }
       );
     } catch (e: any) {

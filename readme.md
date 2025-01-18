@@ -1,0 +1,1 @@
+classdore: YES, without the bs
