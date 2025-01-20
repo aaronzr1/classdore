@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FixedSizeList as List } from 'react-window';
+// import { FixedSizeList as List } from 'react-window';
 import {
     Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
     Paper, Button,
@@ -46,7 +46,7 @@ interface CourseData {
 const CompactTable: React.FC<{ data: CourseData[] }> = ({ data }) => {
 
     const [open, setOpen] = useState(false);
-    const [selectedCourse, setSelectedCourse] = useState<any>(null);
+    const [selectedCourse, setSelectedCourse] = useState<CourseData>();
 
     // Handle row click to open dialog
     const handleRowClick = (course: any) => {
@@ -57,7 +57,7 @@ const CompactTable: React.FC<{ data: CourseData[] }> = ({ data }) => {
     // Handle closing of dialog
     const handleCloseDialog = () => {
         setOpen(false);
-        setSelectedCourse(null);
+        // setSelectedCourse();
     };
 
     return (
@@ -118,7 +118,6 @@ const CompactTable: React.FC<{ data: CourseData[] }> = ({ data }) => {
             <Dialog
                 open={open}
                 onClose={handleCloseDialog}
-                maxWidth="md"  // Optional, sets a maximum width
                 fullWidth  // Makes the dialog take up full width
                 PaperProps={{
                     style: {
