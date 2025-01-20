@@ -1,4 +1,4 @@
-import { Key, useState } from 'react'
+import { useState } from 'react'
 import './App.css'
 import SearchBar from './SearchBar';
 import Table from './Table';
