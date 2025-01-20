@@ -1,1 +1,4 @@
-classdore: YES, without the bs
+# classdore
+YES, without the bs?
+
+deployed code: `frontend/`
