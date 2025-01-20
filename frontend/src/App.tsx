@@ -21,18 +21,20 @@ const App: React.FC = () => {
         setResults(data.message || []);
     };
 
-    
+
     return (
         <div style={{ padding: "2rem" }}>
             <h1>ClassDore Search</h1>
 
             <div style={{ width: "100%" }}>
 
-                <SearchBar onSearch={handleSearch} placeholder="Search for something..."/>
+                <SearchBar onSearch={handleSearch} placeholder="Search for something..." />
 
-                <p> {totalResults} total results </p>
+                <p>
+                    {totalResults} total results {totalResults > 300 && "(300 displayed)"}
+                </p>
 
-                <Table data={results}/>
+                <Table data={results} />
 
                 {/* <ul>
                     {results.map((result: any, index: Key | null | undefined) => (

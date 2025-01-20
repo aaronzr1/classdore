@@ -43,12 +43,12 @@ app.get('/api/search', async (req: Request, res: Response) => {
     const specialChars = /([@\-+~!{}()\[\]^"~*?:\\])/g;
     keywords = keywords.replace(specialChars, '\\$1');
 
-    // // Modify the query based on user input
+    // todo: more robust search parameters
     // if (keywords.includes('"')) {
-    //     // Exact match query
+    //     // exact match
     //     query = `@description:"${keywords}"`;
     // } else if (keywords.includes('*')) {
-    //     // Wildcard search handling
+    //     // wildcard
     //     query = `*${keywords}*`;
     // }
 
@@ -64,7 +64,7 @@ app.get('/api/search', async (req: Request, res: Response) => {
             {
                 LIMIT: {
                     from: 0,
-                    size: 300,
+                    size: 300, // limit to 300 for now
                 },
             }
         );
