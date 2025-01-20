@@ -75,7 +75,8 @@ app.get('/api/search', async (req: Request, res: Response) => {
         {
             LIMIT: {
                 from: 0,
-                size: 10000,
+                size: 300,
+                // size: 10000,
             },
         }
     );
