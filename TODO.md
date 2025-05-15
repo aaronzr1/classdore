@@ -1,0 +1,1 @@
+- scraper expects data directory to already exist (also hardcoded)
