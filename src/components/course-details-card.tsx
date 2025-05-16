@@ -4,37 +4,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 // import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
-
-export type Course = {
-    id: string
-    course_dept: string
-    course_code: string
-    class_section: string
-    course_title: string
-    school: string
-    career: string
-    class_type: string
-    credit_hours: string
-    grading_basis: string
-    consent: string
-    term_year: string // number
-    term_season: string
-    session: string
-    dates: string
-    requirements: string
-    description: string | null
-    notes: string | null
-    status: string
-    capacity: number
-    enrolled: number
-    wl_capacity: number
-    wl_occupied: number
-    attributes: string[] | null
-    meeting_days: string[]
-    meeting_times: string[]
-    meeting_dates: string[]
-    instructors: string[]
-}
+import type { Course } from "../types/course"
 
 interface CourseDetailsCardProps {
     course: Course
@@ -189,7 +159,7 @@ export function CourseDetailsCard({ course, isOpen, onClose }: CourseDetailsCard
                             <Separator />
                             <div>
                                 <h3 className="font-medium mb-1">Instructors:</h3>
-                                <div className="text-sm">{course.instructors.join(", ")}</div>
+                                <div className="text-sm">{course.instructors.join(" • ").replace(/ \(Primary\)/g, "")}</div>
                             </div>
                         </>
                     )}

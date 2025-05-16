@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "ClassDore Search",
+  title: "ClassDore | Class Search",
   description: "YES without the BS :')",
 };
 
