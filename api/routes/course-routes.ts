@@ -1,12 +1,22 @@
 import express from 'express';
+import cors from 'cors';
 import { indexCourses, searchCourses } from '../services/redis-service';
 
 import fs from 'fs';
 import { Course, RawCourse } from '@/../../shared/course';
 
-const router = express.Router();
+const app = express();
+const port = 3000;
 
-router.get('/index-data', async (req, res) => {
+app.use(express.json());
+
+const allowedOrigin = process.env.NODE_ENV === 'production' ? 'https://classdore.vercel.app' : 'http://localhost:5173';
+
+app.use(cors({
+    origin: allowedOrigin,
+}));
+
+app.get('/api/index-data', async (req, res) => {
 
     try {
         const rawData = fs.readFileSync('../data/data.json', 'utf-8');
@@ -35,11 +45,11 @@ router.get('/index-data', async (req, res) => {
 });
 
 // Get all courses
-router.get('/courses', async (req, res) => {
+app.get('/api/courses', async (req, res) => {
     try {
 
         const courses = await searchCourses("*"); // grab all data
-        
+
         if (courses) {
             res.json(courses);
         } else {
@@ -54,7 +64,7 @@ router.get('/courses', async (req, res) => {
 });
 
 // Search courses
-router.get('/courses/search', async (req, res) => {
+app.get('/api/courses/search', async (req, res) => {
     try {
 
         const query = req.query.keywords as string;
@@ -70,7 +80,7 @@ router.get('/courses/search', async (req, res) => {
             console.log('Bad query, just returning empty')
             return res.json(null)
         }
-        
+
         res.json(courses);
 
     } catch (error) {
@@ -79,4 +89,4 @@ router.get('/courses/search', async (req, res) => {
     }
 });
 
-export default router;
+export default app;
