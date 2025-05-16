@@ -1,6 +1,6 @@
 import express from 'express';
 import cors from 'cors';
-import { indexCourses, searchCourses } from '../services/redis-service';
+import { indexCourses, searchCourses } from './services/redis-service';
 
 import fs from 'fs';
 import { Course, RawCourse } from '@/../../shared/course';
