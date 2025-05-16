@@ -4,7 +4,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 // import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
-import type { Course } from "../types/course"
+import type { Course } from "../../shared/course"
 
 interface CourseDetailsCardProps {
     course: Course
@@ -14,7 +14,7 @@ interface CourseDetailsCardProps {
 
 export function CourseDetailsCard({ course, isOpen, onClose }: CourseDetailsCardProps) {
     // Helper function to check if a field exists and is not empty
-    const hasValue = (value: any): boolean => {
+    const hasValue = (value: string | string[] | number | null | undefined): boolean => {
         if (value === null || value === undefined) return false
         if (Array.isArray(value)) return value.length > 0
         if (typeof value === "string") return value.trim() !== ""

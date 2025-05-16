@@ -4,8 +4,8 @@ import type React from "react"
 
 import { useRef, useState, useEffect } from "react"
 import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
-import { Search } from "lucide-react"
+// import { Button } from "@/components/ui/button"
+// import { Search } from "lucide-react"
 
 interface SearchBarProps {
     onSearch: (query: string) => void
@@ -43,7 +43,7 @@ export function SearchBar({ onSearch }: SearchBarProps) {
                 clearTimeout(debounceTimeout.current)
             }
         }
-    }, [query])
+    }, [query]) // eslint-disable-line react-hooks/exhaustive-deps
 
 
     return (

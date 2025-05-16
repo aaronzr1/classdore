@@ -1,4 +1,4 @@
-import type { Course } from "@/components/course-details-card";
+import type { Course } from "@/../shared/course";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
 

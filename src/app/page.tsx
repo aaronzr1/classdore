@@ -23,7 +23,7 @@ export default function Home() {
                 console.log("Single character query, populating all courses");
 
                 const response = await fetch(`http://localhost:3001/api/courses`);
-                let courses = await response.json();
+                const courses = await response.json();
                 setSearchResults(courses);
 
                 return;
@@ -32,7 +32,7 @@ export default function Home() {
             // send query to backend
             console.log("Input query:", query);
             const response = await fetch(`http://localhost:3001/api/courses/search?keywords=${encodeURIComponent(query)}`);
-            let courses = await response.json();
+            const courses = await response.json();
 
             if (Array.isArray(courses)) {
                 setSearchResults(courses);
