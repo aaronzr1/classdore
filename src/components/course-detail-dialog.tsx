@@ -164,11 +164,11 @@ export function CourseDetailDialog({ course, onClose }: CourseDetailDialogProps)
                                 </div>
                             )}
 
-                            {course.attributes.length > 0 && (
+                            {(course.attributes ?? []).length > 0 && (
                                 <div>
                                     <h4 className="font-sans font-bold text-gray-900 mb-2">Course Attributes</h4>
                                     <div className="flex flex-wrap gap-2 w-full">
-                                        {course.attributes.map((attr, idx) => (
+                                        {(course.attributes ?? []).map((attr, idx) => (
                                             <Badge key={idx} variant="secondary" className="text-xs font-serif">
                                                 {attr}
                                             </Badge>

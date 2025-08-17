@@ -16,6 +16,7 @@ interface CourseSearchProps {
     filteredCount: number
     totalCount: number
     isSearchSticky: boolean
+    isSearching?: boolean
 }
 
 export const CourseSearch = forwardRef<HTMLDivElement, CourseSearchProps>(
@@ -31,6 +32,7 @@ export const CourseSearch = forwardRef<HTMLDivElement, CourseSearchProps>(
             filteredCount,
             totalCount,
             isSearchSticky,
+            isSearching = false,
         },
         ref
     ) => {
@@ -49,12 +51,12 @@ export const CourseSearch = forwardRef<HTMLDivElement, CourseSearchProps>(
                             </div>
                         )}
                         <div className="flex-1 relative">
-                            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                            <Search className={`absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 ${isSearching ? 'text-blue-500 animate-pulse' : 'text-gray-400'}`} />
                             <Input
                                 placeholder="Search courses, instructors, or course codes..."
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
-                                className="pl-10 font-serif"
+                                className={`pl-10 font-serif ${isSearching ? 'border-blue-300' : ''}`}
                             />
                         </div>
                         <div className="flex gap-3">

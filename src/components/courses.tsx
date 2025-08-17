@@ -1,14 +1,55 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState, useMemo } from "react"
 import { Course, SortField, SortDirection } from "@/lib/types"
 import { mockCourses } from "@/lib/mock-data"
-import { filterAndSortCourses, getDepartments } from "@/lib/course-utils"
+import { getDepartments } from "@/lib/course-utils"
+import { filterAndSortCourses, initFuse } from "@/lib/search-utils"
 import { useSticky } from "@/lib/use-sticky"
+import { useDebounce } from "@/lib/use-debounce"
 import { CourseSearch } from "./course-search"
-import { CourseTable } from "./course-table"
+import { ViewportCourseTable } from "./viewport-course-table"
 import { CourseDetailDialog } from "./course-detail-dialog"
 import { EmptyState } from "./empty-state"
+import { sanitizeQuery } from "@/lib/utils"
+
+// const handleSearch = async (query: string) => {
+
+//     try {
+        
+//         if (!query.trim()) {
+//             setSearchResults([])
+//             return
+//         }
+        
+//         query = sanitizeQuery(query) // setting some defaults
+//         if (!query.trim()) {
+//             console.log("Single character query, populating all courses")
+
+//             const response = await fetch(`/api/courses`)
+//             const courses = await response.json()
+//             setSearchResults(courses)
+
+//             return
+//         }
+
+//         // send query to backend
+//         console.log("Input query:", query)
+//         const response = await fetch(`/api/courses/search?keywords=${encodeURIComponent(searchTerm)}`)
+//         const courses = await response.json()
+
+//         if (Array.isArray(courses)) {
+//             setSearchResults(courses)
+//         } else {
+//             console.error("Unexpected courses format:", courses)
+//             setSearchResults([])
+//         }
+
+//     } catch (error) {
+//         console.error("Error fetching search results:", error)
+//         setSearchResults([]) // set searchResults to an empty array on error
+//     }
+// }
 
 export default function CourseListings() {
     const [searchTerm, setSearchTerm] = useState("")
@@ -18,9 +59,16 @@ export default function CourseListings() {
     const [sortDirection, setSortDirection] = useState<SortDirection>("asc")
     const [selectedCourse, setSelectedCourse] = useState<Course | null>(null)
 
-    const { isSearchSticky, isTableHeaderSticky, searchBarRef, tableHeaderRef } = useSticky()
+    // 🔄 NEW: Store all courses in memory for client-side filtering
+    const [allCourses, setAllCourses] = useState<Course[]>([])
+    const [isLoading, setIsLoading] = useState(true) // loading indicator for initial load
+    
+    // Debounce search term to improve performance - immediate on first keystroke, then wait 300ms
+    const debouncedSearchTerm = useDebounce(searchTerm, 300)
+    const [isSearching, setIsSearching] = useState(false)
 
-    const departments = getDepartments(mockCourses)
+    const { isSearchSticky, isTableHeaderSticky, searchBarRef, tableHeaderRef } = useSticky()
+    const departments = getDepartments(allCourses) // TODO: is it faster to query Redis for it instead?
 
     const handleSort = (field: SortField) => {
         if (sortField === field) {
@@ -31,27 +79,104 @@ export default function CourseListings() {
         }
     }
 
-    const filteredAndSortedCourses = filterAndSortCourses(
-        mockCourses,
-        searchTerm,
-        selectedDepartment,
-        selectedLevel,
-        sortField,
-        sortDirection
-    )
+    // 🔄 LEGACY BACKEND SEARCH LOGIC - COMMENTED OUT FOR FUTURE REFERENCE
+    // To revert back to Redis-based search, uncomment this section and update the component logic
+    
+    // const handleSearch = async (query: string) => {
+    //     try {
+    //         if (!query.trim()) {
+    //             console.log("Empty query, fetching all courses")
+    //             const response = await fetch(`/api/courses`)
+    //             const courses = await response.json()
+    //             setSearchResults(courses)
+    //             return
+    //         }
+
+    //         query = sanitizeQuery(query) // optional sanitization
+    //         if (!query.trim()) {
+    //             console.log("Single character query, fetching all courses")
+    //             const response = await fetch(`/api/courses`)
+    //             const courses = await response.json()
+    //             setSearchResults(courses)
+    //             return
+    //         }
+
+    //         console.log("Searching backend for:", query)
+    //         setIsLoading(true)
+
+    //         const response = await fetch(`/api/courses/search?keywords=${encodeURIComponent(query)}`)
+    //         const courses = await response.json()
+
+    //         if (Array.isArray(courses)) {
+    //             setSearchResults(courses)
+    //         } else {
+    //             console.error("Unexpected courses format:", courses)
+    //             setSearchResults([])
+    //         }
+
+    //     } catch (error) {
+    //         console.error("Error fetching search results:", error)
+    //         setSearchResults([])
+    //     } finally {
+    //         setIsLoading(false)
+    //     }
+    // }
+
+    // // Trigger search whenever searchTerm changes
+    // useEffect(() => {
+    //     handleSearch(searchTerm)
+    // }, [searchTerm])
+
+    // 🔄 NEW: Load all courses on component mount for client-side filtering
+    useEffect(() => {
+        const loadAllCourses = async () => {
+            try {
+                console.log("loading all courses")
+                setIsLoading(true)
+                const response = await fetch(`/api/courses`)
+                const courses = await response.json()
+                setAllCourses(courses)
+                // Initialize Fuse.js with all courses
+                initFuse(courses)
+            } catch (error) {
+                console.error("Error loading courses:", error)
+                setAllCourses([])
+            } finally {
+                setIsLoading(false)
+            }
+        }
+
+        loadAllCourses()
+    }, [])
+
+    // 🔄 NEW: Use Fuse.js-based filtering and sorting with debounced search
+    const filteredAndSortedCourses = useMemo(() => {
+        // Show searching indicator when user is typing but search hasn't updated yet
+        if (searchTerm !== debouncedSearchTerm) {
+            setIsSearching(true)
+        } else {
+            setIsSearching(false)
+        }
+        
+        return filterAndSortCourses(
+            allCourses,
+            debouncedSearchTerm,
+            selectedDepartment,
+            selectedLevel,
+            sortField,
+            sortDirection
+        )
+    }, [allCourses, debouncedSearchTerm, selectedDepartment, selectedLevel, sortField, sortDirection, searchTerm])
+
+
 
     return (
         <div className="container mx-auto px-4 py-6">
             <div className="text-center mb-6">
                 <h1 className="font-sans text-6xl font-bold text-blue-600 mb-2">Classdore</h1>
-                {/* <p className="font-serif text-gray-600 max-w-2xl mx-auto">
-                    Course reviews and insights from real students. Find the perfect class for your academic journey.
-                </p> */}
                 <p className="font-serif text-gray-600 max-w-2xl mx-auto">
-                    Find the courses you're actually interested in. Course listings updated daily.
+                    Fast, relevant class search. Course listings updated daily.
                 </p>
-                {/* one stop shop for all your classes. it's glassdoor, for commodores. */}
-                {/* add info on usage in this paragraph */}
             </div>
 
             <CourseSearch
@@ -64,14 +189,19 @@ export default function CourseListings() {
                 setSelectedLevel={setSelectedLevel}
                 departments={departments}
                 filteredCount={filteredAndSortedCourses.length}
-                totalCount={mockCourses.length}
+                totalCount={allCourses.length}
                 isSearchSticky={isSearchSticky}
+                isSearching={isSearching}
             />
 
             {isSearchSticky && <div className="h-[120px] mb-4" />}
 
-            {filteredAndSortedCourses.length > 0 ? (
-                <CourseTable
+            {isLoading ? (
+                <div className="text-center py-10">Loading courses...</div>
+            ) : isSearching ? (
+                <div className="text-center py-10">Searching...</div>
+            ) : filteredAndSortedCourses.length > 0 ? (
+                <ViewportCourseTable
                     ref={tableHeaderRef}
                     courses={filteredAndSortedCourses}
                     sortField={sortField}
