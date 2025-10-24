@@ -60,7 +60,7 @@ export default function Courses() {
     const [selectedCourse, setSelectedCourse] = useState<Course | null>(null)
 
     // const [allCourses, setAllCourses] = useState<Course[]>([])
-    const [searchResults, setSearchResults] = useState<any[]>([])
+    const [searchResults, setSearchResults] = useState<Course[]>([])
     const [isLoading, setIsLoading] = useState(true) // loading indicator for initial load
     
     // Debounce search term to improve performance - immediate on first keystroke, then wait 300ms

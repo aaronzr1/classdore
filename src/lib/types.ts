@@ -62,8 +62,35 @@ export interface Course {
 
 export interface RedisSearchResult {
     total: number;
-    documents: Array<any>;
+    documents: Array<Record<string, unknown>>;
 }
 
 export type SortField = "course_code" | "course_title" | "instructors" | "credit_hours" | "enrolled"
 export type SortDirection = "asc" | "desc"
+
+export interface CourseSearchRequest {
+    query?: string
+    department?: string
+    school?: string
+    limit?: number
+    offset?: number
+    sortField?: SortField
+    sortDirection?: SortDirection
+}
+
+export interface CourseSearchResponse {
+    courses: CourseTableItem[]
+    total: number
+    hasMore: boolean
+    query: string
+    filters: { department?: string; school?: string }
+}
+
+export interface CourseTableItem {
+    id: string
+    course_title: string
+    course_dept: string
+    instructors: string[]
+    school: string
+    description: string | null
+}

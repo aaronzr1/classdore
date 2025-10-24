@@ -66,8 +66,7 @@ export async function searchCoursesOptimized(
 
         console.log("RediSearch query:", finalQuery);
 
-        // Build search options with sorting and pagination
-        const searchOptions: any = {
+        const searchOptions: Record<string, unknown> = {
             LIMIT: { from: offset, size: limit },
             RETURN: ["id", "course_title", "course_dept", "instructors", "school", "description"]
         };
@@ -84,16 +83,16 @@ export async function searchCoursesOptimized(
         const result = await client.ft.search("idx:courses", finalQuery, searchOptions);
 
         // Type assertion for Redis search result
-        const searchResult = result as { total: number; documents: Array<{ id: string; value: any }> };
+        const searchResult = result as { total: number; documents: Array<{ id: string; value: Record<string, unknown> }> };
 
         // Transform results to CourseTableItem format for optimal performance
         const courses: CourseTableItem[] = searchResult.documents.map((doc) => ({
-            id: doc.value.id,
-            course_title: doc.value.course_title,
-            course_dept: doc.value.course_dept,
-            instructors: doc.value.instructors || [],
-            school: doc.value.school,
-            description: doc.value.description
+            id: doc.value.id as string,
+            course_title: doc.value.course_title as string,
+            course_dept: doc.value.course_dept as string,
+            instructors: (doc.value.instructors as string[]) || [],
+            school: doc.value.school as string,
+            description: doc.value.description as string | null
         }));
 
         return {
@@ -129,7 +128,7 @@ export async function getDepartments(): Promise<string[]> {
         const result = await client.ft.aggregate("idx:courses", "*", {
             GROUPBY: { REDUCE: "COUNT", fields: ["@course_dept"] },
             SORTBY: { field: "@course_dept", direction: "ASC" }
-        } as any);
+        } as Record<string, unknown>);
 
         // Type assertion for aggregation result
         const aggResult = result as { results: Array<{ course_dept: string }> };
@@ -148,7 +147,7 @@ export async function getSchools(): Promise<string[]> {
         const result = await client.ft.aggregate("idx:courses", "*", {
             GROUPBY: { REDUCE: "COUNT", fields: ["@school"] },
             SORTBY: { field: "@school", direction: "ASC" }
-        } as any);
+        } as Record<string, unknown>);
 
         // Type assertion for aggregation result
         const aggResult = result as { results: Array<{ school: string }> };

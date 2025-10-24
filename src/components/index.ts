@@ -1,4 +1,4 @@
-export { CourseListings } from "./courses"
+export { Courses } from "./courses"
 export { CourseSearch } from "./course-search"
 export { CourseTable } from "./course-table"
 export { CourseDetailDialog } from "./course-detail-dialog"
