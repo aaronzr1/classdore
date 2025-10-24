@@ -4,7 +4,7 @@ import { useEffect, useState, useMemo } from "react"
 import { Course, SortField, SortDirection } from "@/lib/types"
 import { mockCourses } from "@/lib/mock-data"
 import { getDepartments } from "@/lib/course-utils"
-import { filterAndSortCourses, initFuse } from "@/lib/search-utils"
+// import { filterAndSortCourses, initFuse } from "@/lib/search-utils"
 import { useSticky } from "@/lib/use-sticky"
 import { useDebounce } from "@/lib/use-debounce"
 import { CourseSearch } from "./course-search"
@@ -51,7 +51,7 @@ import { sanitizeQuery } from "@/lib/utils"
 //     }
 // }
 
-export default function CourseListings() {
+export default function Courses() {
     const [searchTerm, setSearchTerm] = useState("")
     const [selectedDepartment, setSelectedDepartment] = useState<string>("all")
     const [selectedLevel, setSelectedLevel] = useState<string>("all")
@@ -59,8 +59,8 @@ export default function CourseListings() {
     const [sortDirection, setSortDirection] = useState<SortDirection>("asc")
     const [selectedCourse, setSelectedCourse] = useState<Course | null>(null)
 
-    // 🔄 NEW: Store all courses in memory for client-side filtering
-    const [allCourses, setAllCourses] = useState<Course[]>([])
+    // const [allCourses, setAllCourses] = useState<Course[]>([])
+    const [searchResults, setSearchResults] = useState<any[]>([])
     const [isLoading, setIsLoading] = useState(true) // loading indicator for initial load
     
     // Debounce search term to improve performance - immediate on first keystroke, then wait 300ms
@@ -68,7 +68,7 @@ export default function CourseListings() {
     const [isSearching, setIsSearching] = useState(false)
 
     const { isSearchSticky, isTableHeaderSticky, searchBarRef, tableHeaderRef } = useSticky()
-    const departments = getDepartments(allCourses) // TODO: is it faster to query Redis for it instead?
+    // const departments = getDepartments(allCourses) // TODO: is it faster to query Redis for it instead?
 
     const handleSort = (field: SortField) => {
         if (sortField === field) {
@@ -79,96 +79,50 @@ export default function CourseListings() {
         }
     }
 
-    // 🔄 LEGACY BACKEND SEARCH LOGIC - COMMENTED OUT FOR FUTURE REFERENCE
-    // To revert back to Redis-based search, uncomment this section and update the component logic
-    
-    // const handleSearch = async (query: string) => {
-    //     try {
-    //         if (!query.trim()) {
-    //             console.log("Empty query, fetching all courses")
-    //             const response = await fetch(`/api/courses`)
-    //             const courses = await response.json()
-    //             setSearchResults(courses)
-    //             return
-    //         }
-
-    //         query = sanitizeQuery(query) // optional sanitization
-    //         if (!query.trim()) {
-    //             console.log("Single character query, fetching all courses")
-    //             const response = await fetch(`/api/courses`)
-    //             const courses = await response.json()
-    //             setSearchResults(courses)
-    //             return
-    //         }
-
-    //         console.log("Searching backend for:", query)
-    //         setIsLoading(true)
-
-    //         const response = await fetch(`/api/courses/search?keywords=${encodeURIComponent(query)}`)
-    //         const courses = await response.json()
-
-    //         if (Array.isArray(courses)) {
-    //             setSearchResults(courses)
-    //         } else {
-    //             console.error("Unexpected courses format:", courses)
-    //             setSearchResults([])
-    //         }
-
-    //     } catch (error) {
-    //         console.error("Error fetching search results:", error)
-    //         setSearchResults([])
-    //     } finally {
-    //         setIsLoading(false)
-    //     }
-    // }
-
-    // // Trigger search whenever searchTerm changes
-    // useEffect(() => {
-    //     handleSearch(searchTerm)
-    // }, [searchTerm])
-
-    // 🔄 NEW: Load all courses on component mount for client-side filtering
-    useEffect(() => {
-        const loadAllCourses = async () => {
-            try {
-                console.log("loading all courses")
-                setIsLoading(true)
+    const handleSearch = async (query: string) => {
+        try {
+            if (!query.trim()) {
+                console.log("Empty query, fetching all courses")
                 const response = await fetch(`/api/courses`)
                 const courses = await response.json()
-                setAllCourses(courses)
-                // Initialize Fuse.js with all courses
-                initFuse(courses)
-            } catch (error) {
-                console.error("Error loading courses:", error)
-                setAllCourses([])
-            } finally {
-                setIsLoading(false)
+                setSearchResults(courses)
+                return
             }
+
+            query = sanitizeQuery(query) // optional sanitization
+            if (!query.trim()) {
+                console.log("Single character query, fetching all courses")
+                const response = await fetch(`/api/courses`)
+                const courses = await response.json()
+                setSearchResults(courses)
+                return
+            }
+
+            console.log("Searching backend for:", query)
+            setIsLoading(true)
+
+            const response = await fetch(`/api/courses/search?keywords=${encodeURIComponent(query)}`)
+            const courses = await response.json()
+
+            if (Array.isArray(courses)) {
+                setSearchResults(courses)
+            } else {
+                console.error("Unexpected courses format:", courses)
+                setSearchResults([])
+            }
+
+        } catch (error) {
+            console.error("Error fetching search results:", error)
+            setSearchResults([])
+        } finally {
+            setIsLoading(false)
         }
+    }
 
-        loadAllCourses()
-    }, [])
-
-    // 🔄 NEW: Use Fuse.js-based filtering and sorting with debounced search
-    const filteredAndSortedCourses = useMemo(() => {
-        // Show searching indicator when user is typing but search hasn't updated yet
-        if (searchTerm !== debouncedSearchTerm) {
-            setIsSearching(true)
-        } else {
-            setIsSearching(false)
-        }
-        
-        return filterAndSortCourses(
-            allCourses,
-            debouncedSearchTerm,
-            selectedDepartment,
-            selectedLevel,
-            sortField,
-            sortDirection
-        )
-    }, [allCourses, debouncedSearchTerm, selectedDepartment, selectedLevel, sortField, sortDirection, searchTerm])
-
-
+    // Trigger search whenever searchTerm changes
+    useEffect(() => {
+        handleSearch(searchTerm)
+    }, [searchTerm])
 
     return (
         <div className="container mx-auto px-4 py-6">
@@ -187,9 +141,9 @@ export default function CourseListings() {
                 setSelectedDepartment={setSelectedDepartment}
                 selectedLevel={selectedLevel}
                 setSelectedLevel={setSelectedLevel}
-                departments={departments}
-                filteredCount={filteredAndSortedCourses.length}
-                totalCount={allCourses.length}
+                departments={[]} // TODO
+                filteredCount={searchResults.length} // TODO: filter/sort
+                totalCount={searchResults.length}
                 isSearchSticky={isSearchSticky}
                 isSearching={isSearching}
             />
@@ -200,10 +154,10 @@ export default function CourseListings() {
                 <div className="text-center py-10">Loading courses...</div>
             ) : isSearching ? (
                 <div className="text-center py-10">Searching...</div>
-            ) : filteredAndSortedCourses.length > 0 ? (
+            ) : searchResults.length > 0 ? ( // TODO: filter/sort
                 <ViewportCourseTable
                     ref={tableHeaderRef}
-                    courses={filteredAndSortedCourses}
+                    courses={searchResults} // TODO: filter/sort
                     sortField={sortField}
                     sortDirection={sortDirection}
                     onSort={handleSort}
@@ -220,4 +174,4 @@ export default function CourseListings() {
     )
 }
 
-export { CourseListings }
+export { Courses }
