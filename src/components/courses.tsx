@@ -53,22 +53,45 @@ import { sanitizeQuery } from "@/lib/utils"
 
 export default function Courses() {
     const [searchTerm, setSearchTerm] = useState("")
-    const [selectedDepartment, setSelectedDepartment] = useState<string>("all")
-    const [selectedLevel, setSelectedLevel] = useState<string>("all")
+    const [selectedDepartment, setSelectedDepartment] = useState<string>("all") // filter
+    const [selectedSchool, setSelectedSchool] = useState<string>("all") // filter
     const [sortField, setSortField] = useState<SortField>("course_code")
     const [sortDirection, setSortDirection] = useState<SortDirection>("asc")
     const [selectedCourse, setSelectedCourse] = useState<Course | null>(null)
 
     // const [allCourses, setAllCourses] = useState<Course[]>([])
-    const [searchResults, setSearchResults] = useState<Course[]>([])
+    const [allDepartments, setAllDepartments] = useState<string[]>([])
+    const [allSchools, setAllSchools] = useState<string[]>([])
     const [isLoading, setIsLoading] = useState(true) // loading indicator for initial load
+    const [searchResults, setSearchResults] = useState<Course[]>([])
     
-    // Debounce search term to improve performance - immediate on first keystroke, then wait 300ms
-    const debouncedSearchTerm = useDebounce(searchTerm, 300)
+    // debouncing: immediate on first keystroke, then wait 300ms
+    // const debouncedSearchTerm = useDebounce(searchTerm, 300)
     const [isSearching, setIsSearching] = useState(false)
 
     const { isSearchSticky, isTableHeaderSticky, searchBarRef, tableHeaderRef } = useSticky()
-    // const departments = getDepartments(allCourses) // TODO: is it faster to query Redis for it instead?
+
+
+    // load in departments and school
+    useEffect(() => {
+        const fetchData = async () => {
+            const [deptRes, schRes] = await Promise.all([
+                fetch(`/api/departments`),
+                fetch(`/api/schools`),
+            ])
+
+            const [depts, schools] = await Promise.all([
+                deptRes.json(),
+                schRes.json()
+            ])
+
+            setAllDepartments(depts)
+            setAllSchools(schools)
+        }
+
+        fetchData()
+    }, [])
+    
 
     const handleSort = (field: SortField) => {
         if (sortField === field) {
@@ -79,9 +102,9 @@ export default function Courses() {
         }
     }
 
-    const handleSearch = async (query: string) => {
+    const handleSearch = async (query: string, dept: string, school: string) => {
         try {
-            if (!query.trim()) {
+            if (!query.trim() && dept == "all" && school == "all") {
                 console.log("Empty query, fetching all courses")
                 const response = await fetch(`/api/courses`)
                 const courses = await response.json()
@@ -90,7 +113,7 @@ export default function Courses() {
             }
 
             query = sanitizeQuery(query) // optional sanitization
-            if (!query.trim()) {
+            if (!query.trim() && dept == "all" && school == "all") {
                 console.log("Single character query, fetching all courses")
                 const response = await fetch(`/api/courses`)
                 const courses = await response.json()
@@ -101,7 +124,7 @@ export default function Courses() {
             console.log("Searching backend for:", query)
             setIsLoading(true)
 
-            const response = await fetch(`/api/courses/search?keywords=${encodeURIComponent(query)}`)
+            const response = await fetch(`/api/courses/search?keywords=${encodeURIComponent(query)}&dept=${dept}&school=${school}`)
             const courses = await response.json()
 
             if (Array.isArray(courses)) {
@@ -121,8 +144,8 @@ export default function Courses() {
 
     // Trigger search whenever searchTerm changes
     useEffect(() => {
-        handleSearch(searchTerm)
-    }, [searchTerm])
+        handleSearch(searchTerm, selectedDepartment, selectedSchool)
+    }, [searchTerm, selectedDepartment, selectedSchool])
 
     return (
         <div className="container mx-auto px-4 py-6">
@@ -139,9 +162,10 @@ export default function Courses() {
                 setSearchTerm={setSearchTerm}
                 selectedDepartment={selectedDepartment}
                 setSelectedDepartment={setSelectedDepartment}
-                selectedLevel={selectedLevel}
-                setSelectedLevel={setSelectedLevel}
-                departments={[]} // TODO
+                selectedSchool={selectedSchool}
+                setSelectedSchool={setSelectedSchool}
+                departments={allDepartments}
+                schools={allSchools}
                 filteredCount={searchResults.length} // TODO: filter/sort
                 totalCount={searchResults.length}
                 isSearchSticky={isSearchSticky}

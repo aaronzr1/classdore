@@ -10,9 +10,10 @@ interface CourseSearchProps {
     setSearchTerm: (term: string) => void
     selectedDepartment: string
     setSelectedDepartment: (dept: string) => void
-    selectedLevel: string
-    setSelectedLevel: (level: string) => void
+    selectedSchool: string
+    setSelectedSchool: (school: string) => void
     departments: string[]
+    schools: string[]
     filteredCount: number
     totalCount: number
     isSearchSticky: boolean
@@ -26,9 +27,10 @@ export const CourseSearch = forwardRef<HTMLDivElement, CourseSearchProps>(
             setSearchTerm,
             selectedDepartment,
             setSelectedDepartment,
-            selectedLevel,
-            setSelectedLevel,
+            selectedSchool,
+            setSelectedSchool,
             departments,
+            schools,
             filteredCount,
             totalCount,
             isSearchSticky,
@@ -44,13 +46,13 @@ export const CourseSearch = forwardRef<HTMLDivElement, CourseSearchProps>(
                 }`}
             >
                 <div className={`${isSearchSticky ? "container mx-auto px-4" : ""}`}>
-                    <div className="flex flex-col lg:flex-row gap-3 items-center">
+                    <div className="flex flex-col lg:flex-row gap-3 items-center w-full">
                         {isSearchSticky && (
                             <div className="flex-shrink-0">
                                 <h2 className="font-sans text-xl font-bold text-blue-600">Classdore</h2>
                             </div>
                         )}
-                        <div className="flex-1 relative">
+                        <div className="flex-1 min-w-0 relative">
                             <Search className={`absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 ${isSearching ? 'text-blue-500 animate-pulse' : 'text-gray-400'}`} />
                             <Input
                                 placeholder="Search courses, instructors, or course codes..."
@@ -59,13 +61,13 @@ export const CourseSearch = forwardRef<HTMLDivElement, CourseSearchProps>(
                                 className={`pl-10 font-serif ${isSearching ? 'border-blue-300' : ''}`}
                             />
                         </div>
-                        <div className="flex gap-3">
+                        <div className="shrink-0">
                             <Select value={selectedDepartment} onValueChange={setSelectedDepartment}>
-                                <SelectTrigger className="w-48 font-serif">
+                                <SelectTrigger className="!w-[20vw] !min-w-[140px] !max-w-40 font-serif">
                                     <Filter className="mr-2 h-4 w-4" />
                                     <SelectValue placeholder="Department" />
                                 </SelectTrigger>
-                                <SelectContent>
+                                <SelectContent className="max-h-[300px] overflow-y-auto">
                                     <SelectItem value="all">All Departments</SelectItem>
                                     {departments.map((dept) => (
                                         <SelectItem key={dept} value={dept}>
@@ -74,14 +76,21 @@ export const CourseSearch = forwardRef<HTMLDivElement, CourseSearchProps>(
                                     ))}
                                 </SelectContent>
                             </Select>
-                            <Select value={selectedLevel} onValueChange={setSelectedLevel}>
-                                <SelectTrigger className="w-40 font-serif">
-                                    <SelectValue placeholder="Level" />
+                        </div>
+                        <div className="shrink-0">
+                            <Select value={selectedSchool} onValueChange={setSelectedSchool}>
+                                <SelectTrigger className="!w-[15vw] !min-w-[120px] !max-w-40 font-serif">
+                                    <SelectValue placeholder="School" />
                                 </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="all">All Levels</SelectItem>
-                                    <SelectItem value="Undergraduate">Undergraduate</SelectItem>
-                                    <SelectItem value="Graduate">Graduate</SelectItem>
+                                <SelectContent className="max-h-[300px] overflow-y-auto">
+                                    <SelectItem value="all">All Schools</SelectItem>
+                                    {schools.map((school) => (
+                                        <SelectItem key={school} value={school}>
+                                            {school}
+                                        </SelectItem>
+                                    ))}
+                                    {/* <SelectItem value="Undergraduate">Undergraduate</SelectItem>
+                                    <SelectItem value="Graduate">Graduate</SelectItem> */}
                                 </SelectContent>
                             </Select>
                         </div>

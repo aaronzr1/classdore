@@ -57,7 +57,7 @@
 //     courses: Course[],
 //     searchTerm: string,
 //     selectedDepartment: string,
-//     selectedLevel: string,
+//     selectedSchool: string,
 //     sortField: SortField,
 //     sortDirection: SortDirection
 // ): Course[] {
@@ -67,8 +67,8 @@
 //     return searchedCourses
 //         // .filter((course) => {
 //         //     const matchesDepartment = selectedDepartment === "all" || course.course_dept === selectedDepartment
-//         //     const matchesLevel = selectedLevel === "all" || course.career === selectedLevel
-//         //     return matchesDepartment && matchesLevel
+//         //     const matchesSchool = selectedSchool === "all" || course.career === selectedSchool
+//         //     return matchesDepartment && matchesSchool
 //         // })
 //         .sort((a, b) => {
 //             let aValue: string | string[] | number = a[sortField]

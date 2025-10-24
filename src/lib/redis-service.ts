@@ -21,7 +21,7 @@ export async function getRedisClient() {
     return redisClient;
 }
 
-// Optimized search function using RediSearch with proper indexing
+// Optimized search function using RediSearch with proper indexing; NOTE: NOT USED YET
 export async function searchCoursesOptimized(
     request: CourseSearchRequest
 ): Promise<CourseSearchResponse> {
@@ -109,7 +109,7 @@ export async function searchCoursesOptimized(
     }
 }
 
-// Get top courses for initial load (no search query)
+// Get top courses for initial load (no search query); NOTE: NOT USED YET
 export async function getTopCourses(limit: number = 50): Promise<CourseSearchResponse> {
     return searchCoursesOptimized({
         query: "",
@@ -126,13 +126,17 @@ export async function getDepartments(): Promise<string[]> {
     try {
         // Use RediSearch aggregation to get unique departments
         const result = await client.ft.aggregate("idx:courses", "*", {
-            GROUPBY: { REDUCE: "COUNT", fields: ["@course_dept"] },
+            LOAD: ["@course_dept"],
+            GROUPBY: { fields: ["@course_dept"], REDUCE: "COUNT" },
             SORTBY: { field: "@course_dept", direction: "ASC" }
         } as Record<string, unknown>);
 
         // Type assertion for aggregation result
         const aggResult = result as { results: Array<{ course_dept: string }> };
-        return aggResult.results.map((item) => item.course_dept).filter(Boolean);
+        const departments = aggResult.results.map((item) => item.course_dept).filter(Boolean);
+        
+        // Convert to Set to remove duplicates, then back to sorted array
+        return Array.from(new Set(departments)).sort();
     } catch (error) {
         console.error("Error fetching departments:", error);
         return [];
@@ -145,13 +149,17 @@ export async function getSchools(): Promise<string[]> {
     try {
         // Use RediSearch aggregation to get unique schools
         const result = await client.ft.aggregate("idx:courses", "*", {
-            GROUPBY: { REDUCE: "COUNT", fields: ["@school"] },
+            LOAD: ["@school"],
+            GROUPBY: { fields: ["@school"], REDUCE: "COUNT" },
             SORTBY: { field: "@school", direction: "ASC" }
         } as Record<string, unknown>);
 
         // Type assertion for aggregation result
         const aggResult = result as { results: Array<{ school: string }> };
-        return aggResult.results.map((item) => item.school).filter(Boolean);
+        const schools = aggResult.results.map((item) => item.school).filter(Boolean);
+        
+        // Convert to Set to remove duplicates, then back to sorted array
+        return Array.from(new Set(schools)).sort();
     } catch (error) {
         console.error("Error fetching schools:", error);
         return [];
@@ -216,9 +224,18 @@ export async function getAllCourses(): Promise<Course[]> {
     }
 }
 // Legacy search function for backward compatibility
-export async function searchCourses(query: string): Promise<Course[] | null> {
+export async function searchCourses(query: string, dept: string, school: string): Promise<Course[] | null> {
     const client = await getRedisClient();
     try {
+
+        if (school && school !== "all") {
+            query = `@school_tag:{${school}} ${query}`;
+        }
+          
+        if (dept && dept !== "all") {
+            query = `@course_dept_tag:{${dept}} ${query}`;
+        }
+
         console.log("Querying:", query);
         const result = await client.ft.search(
             "idx:courses",
