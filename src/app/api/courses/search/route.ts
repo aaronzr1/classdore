@@ -6,6 +6,8 @@ export async function GET(req: Request) {
     const keywords = searchParams.get("keywords") || "*";
     const dept = searchParams.get("dept") || "all";
     const school = searchParams.get("school") || "all";
+    const sortField = searchParams.get("sortField") || "course_code";
+    const sortDirection = searchParams.get("sortDirection") || "asc";
 
     if (keywords === "*" && dept === "all" && school === "all") { // shouldn't happen
         try {
@@ -18,7 +20,7 @@ export async function GET(req: Request) {
     }
 
     try {
-        const courses = await searchCourses(keywords, dept, school);
+        const courses = await searchCourses(keywords, dept, school, sortField as any, sortDirection as any);
         if (!courses) return NextResponse.json([], { status: 200 });
         return NextResponse.json(courses);
     } catch (err) {

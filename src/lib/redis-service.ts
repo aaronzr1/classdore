@@ -234,7 +234,7 @@ export async function getAllCourses(): Promise<Course[]> {
     }
 }
 // Legacy search function for backward compatibility
-export async function searchCourses(query: string, dept: string, school: string): Promise<Course[] | null> {
+export async function searchCourses(query: string, dept: string, school: string, sortField?: SortField, sortDirection?: SortDirection): Promise<Course[] | null> {
     const client = await getRedisClient();
     try {
 
@@ -247,10 +247,23 @@ export async function searchCourses(query: string, dept: string, school: string)
         }
 
         console.log("Querying:", query);
+        
+        const searchOptions: Record<string, unknown> = {
+            LIMIT: { from: 0, size: 10000 }
+        };
+
+        // Add sorting if specified
+        if (sortField && sortDirection) {
+            searchOptions.SORTBY = {
+                BY: sortField,
+                DIRECTION: sortDirection.toUpperCase()
+            };
+        }
+
         const result = await client.ft.search(
             "idx:courses",
             query,
-            { LIMIT: { from: 0, size: 10000 } }
+            searchOptions
         );
 
         // Type assertion for Redis search result

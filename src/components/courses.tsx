@@ -93,6 +93,48 @@ export default function Courses() {
     }, [])
     
 
+    // Local sorting function for existing searchResults
+    const sortSearchResults = (results: Course[], field: SortField, direction: SortDirection): Course[] => {
+        return [...results].sort((a, b) => {
+            let aValue: string | number
+            let bValue: string | number
+
+            switch (field) {
+                case "course_code":
+                    aValue = a.course_code
+                    bValue = b.course_code
+                    break
+                case "course_title":
+                    aValue = a.course_title
+                    bValue = b.course_title
+                    break
+                case "instructors":
+                    aValue = a.instructors.join(", ")
+                    bValue = b.instructors.join(", ")
+                    break
+                case "credit_hours":
+                    aValue = parseInt(a.credit_hours) || 0
+                    bValue = parseInt(b.credit_hours) || 0
+                    break
+                case "enrolled":
+                    aValue = parseInt(a.enrolled) || 0
+                    bValue = parseInt(b.enrolled) || 0
+                    break
+                default:
+                    aValue = a.course_code
+                    bValue = b.course_code
+            }
+
+            if (typeof aValue === "string" && typeof bValue === "string") {
+                const comparison = aValue.localeCompare(bValue)
+                return direction === "asc" ? comparison : -comparison
+            } else {
+                const comparison = (aValue as number) - (bValue as number)
+                return direction === "asc" ? comparison : -comparison
+            }
+        })
+    }
+
     const handleSort = (field: SortField) => {
         if (sortField === field) {
             setSortDirection(sortDirection === "asc" ? "desc" : "asc")
@@ -102,11 +144,13 @@ export default function Courses() {
         }
     }
 
+
+
     const handleSearch = async (query: string, dept: string, school: string) => {
         try {
             if (!query.trim() && dept == "all" && school == "all") {
                 console.log("Empty query, fetching all courses")
-                const response = await fetch(`/api/courses`)
+                const response = await fetch(`/api/courses?sortField=${sortField}&sortDirection=${sortDirection}`)
                 const courses = await response.json()
                 setSearchResults(courses)
                 return
@@ -115,7 +159,7 @@ export default function Courses() {
             query = sanitizeQuery(query) // optional sanitization
             if (!query.trim() && dept == "all" && school == "all") {
                 console.log("Single character query, fetching all courses")
-                const response = await fetch(`/api/courses`)
+                const response = await fetch(`/api/courses?sortField=${sortField}&sortDirection=${sortDirection}`)
                 const courses = await response.json()
                 setSearchResults(courses)
                 return
@@ -124,7 +168,7 @@ export default function Courses() {
             console.log("Searching backend for:", query)
             setIsLoading(true)
 
-            const response = await fetch(`/api/courses/search?keywords=${encodeURIComponent(query)}&dept=${dept}&school=${school}`)
+            const response = await fetch(`/api/courses/search?keywords=${encodeURIComponent(query)}&dept=${dept}&school=${school}&sortField=${sortField}&sortDirection=${sortDirection}`)
             const courses = await response.json()
 
             if (Array.isArray(courses)) {
@@ -142,10 +186,18 @@ export default function Courses() {
         }
     }
 
-    // Trigger search whenever searchTerm changes
+    // Trigger search only when search term, department, or school changes
     useEffect(() => {
         handleSearch(searchTerm, selectedDepartment, selectedSchool)
     }, [searchTerm, selectedDepartment, selectedSchool])
+
+    // Handle local sorting when only sortField or sortDirection changes
+    useEffect(() => {
+        if (searchResults.length > 0) {
+            const sortedResults = sortSearchResults(searchResults, sortField, sortDirection)
+            setSearchResults(sortedResults)
+        }
+    }, [sortField, sortDirection])
 
     return (
         <div className="container mx-auto px-4 py-6">
