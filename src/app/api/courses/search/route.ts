@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
-import { getAllCourses, searchCourses, searchCoursesOptimized } from "@/lib/redis-service";
+import { getAllCourses, searchCourses } from "@/lib/redis-service";
+import { SortField, SortDirection } from "@/lib/types";
 
 export async function GET(req: Request) {
     const { searchParams } = new URL(req.url);
@@ -20,7 +21,13 @@ export async function GET(req: Request) {
     }
 
     try {
-        const courses = await searchCourses(keywords, dept, school, sortField as any, sortDirection as any);
+        const courses = await searchCourses(
+            keywords,
+            dept,
+            school,
+            sortField as SortField,
+            sortDirection as SortDirection
+        );
         if (!courses) return NextResponse.json([], { status: 200 });
         return NextResponse.json(courses);
     } catch (err) {

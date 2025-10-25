@@ -30,7 +30,7 @@ function SortButton({ field, children, currentSortField, currentSortDirection, o
             variant="ghost"
             size="sm"
             onClick={() => onSort(field)}
-            className="h-auto p-1 font-sans font-bold text-left justify-start hover:bg-blue-50"
+            className="h-auto p-1 font-sans font-bold text-left flex items-center justify-start hover:bg-blue-50"
         >
             {children}
             {currentSortField === field &&
@@ -54,7 +54,7 @@ function CourseRow({ course, index, onSelect }: { course: Course; index: number;
             }`}
         >
             <div className="grid grid-cols-12 gap-4 items-center">
-                <div className="col-span-2">
+                <div className="col-span-2 min-w-[120px]">
                     <div className="flex flex-col">
                         <span className="font-mono font-semibold text-blue-600 text-sm">
                             {course.course_dept} {course.course_code}
@@ -72,7 +72,7 @@ function CourseRow({ course, index, onSelect }: { course: Course; index: number;
                     </div>
                 </div>
 
-                <div className="col-span-3">
+                <div className="col-span-3 min-w-[200px]">
                     <div className="flex flex-col">
                         <h3 className="font-sans font-bold text-gray-900 text-sm leading-tight">
                             {course.course_title}
@@ -86,7 +86,7 @@ function CourseRow({ course, index, onSelect }: { course: Course; index: number;
                     </div>
                 </div>
 
-                <div className="col-span-2">
+                <div className="col-span-2 min-w-[140px]">
                     <div className="flex flex-col">
                         <span className="font-serif text-sm text-gray-900">
                             {course.instructors[0]?.replace(" (Primary)", "") || "TBA"}
@@ -95,11 +95,13 @@ function CourseRow({ course, index, onSelect }: { course: Course; index: number;
                     </div>
                 </div>
 
-                <div className="col-span-1">
-                    <span className="font-serif text-sm font-semibold text-gray-900">{course.credit_hours}</span>
+                <div className="col-span-1 min-w-[60px]">
+                    <div className="p-1">
+                        <span className="font-serif text-sm font-semibold text-gray-900">{course.credit_hours}</span>
+                    </div>
                 </div>
 
-                <div className="col-span-2">
+                <div className="col-span-2 min-w-[120px]">
                     <div className="flex items-center gap-1">
                         <Clock className="h-3 w-3 text-blue-600" />
                         <span className="font-serif text-xs text-gray-700">
@@ -108,7 +110,7 @@ function CourseRow({ course, index, onSelect }: { course: Course; index: number;
                     </div>
                 </div>
 
-                <div className="col-span-2">
+                <div className="col-span-2 min-w-[140px]">
                     <div className="flex items-center gap-2">
                         <Users className="h-3 w-3 text-blue-600" />
                         <div className="flex-1">
@@ -166,79 +168,83 @@ export const CourseTable = forwardRef<HTMLDivElement, CourseTableProps>(
     ) => {
         return (
             <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
-                <div
-                    ref={ref}
-                    className={`bg-gray-50 border-b border-gray-200 px-4 py-3 transition-all duration-200 ${
-                        isTableHeaderSticky
-                            ? `fixed ${isSearchSticky ? "top-[115px]" : "top-0"} left-0 right-0 z-40 shadow-sm`
-                            : ""
-                    }`}
-                >
-                    <div className={`${isTableHeaderSticky ? "container mx-auto px-4" : ""}`}>
-                        <div className="grid grid-cols-12 gap-4 items-center">
-                            <div className="col-span-2">
-                                <SortButton
-                                    field="course_code"
-                                    currentSortField={sortField}
-                                    currentSortDirection={sortDirection}
-                                    onSort={onSort}
-                                >
-                                    Course Code
-                                </SortButton>
-                            </div>
-                            <div className="col-span-3">
-                                <SortButton
-                                    field="course_title"
-                                    currentSortField={sortField}
-                                    currentSortDirection={sortDirection}
-                                    onSort={onSort}
-                                >
-                                    Course Title
-                                </SortButton>
-                            </div>
-                            <div className="col-span-2">
-                                <SortButton
-                                    field="instructors"
-                                    currentSortField={sortField}
-                                    currentSortDirection={sortDirection}
-                                    onSort={onSort}
-                                >
-                                    Instructor
-                                </SortButton>
-                            </div>
-                            <div className="col-span-1">
-                                <SortButton
-                                    field="credit_hours"
-                                    currentSortField={sortField}
-                                    currentSortDirection={sortDirection}
-                                    onSort={onSort}
-                                >
-                                    Credits
-                                </SortButton>
-                            </div>
-                            <div className="col-span-2">
-                                <span className="font-sans font-bold text-sm text-gray-700">Schedule</span>
-                            </div>
-                            <div className="col-span-2">
-                                <SortButton
-                                    field="enrolled"
-                                    currentSortField={sortField}
-                                    currentSortDirection={sortDirection}
-                                    onSort={onSort}
-                                >
-                                    Availability
-                                </SortButton>
+                <div className="overflow-x-auto">
+                    <div className="min-w-[800px]">
+                        <div
+                            ref={ref}
+                            className={`bg-gray-50 border-b border-gray-200 px-4 py-3 transition-all duration-200 ${
+                                isTableHeaderSticky
+                                    ? `fixed ${isSearchSticky ? "top-[115px]" : "top-0"} left-0 right-0 z-40 shadow-sm`
+                                    : ""
+                            }`}
+                        >
+                            <div className={`${isTableHeaderSticky ? "container mx-auto px-4" : ""}`}>
+                                <div className="grid grid-cols-12 gap-4 items-center">
+                                    <div className="col-span-2">
+                                        <SortButton
+                                            field="course_code"
+                                            currentSortField={sortField}
+                                            currentSortDirection={sortDirection}
+                                            onSort={onSort}
+                                        >
+                                            Course Code
+                                        </SortButton>
+                                    </div>
+                                    <div className="col-span-3">
+                                        <SortButton
+                                            field="course_title"
+                                            currentSortField={sortField}
+                                            currentSortDirection={sortDirection}
+                                            onSort={onSort}
+                                        >
+                                            Course Title
+                                        </SortButton>
+                                    </div>
+                                    <div className="col-span-2">
+                                        <SortButton
+                                            field="instructors"
+                                            currentSortField={sortField}
+                                            currentSortDirection={sortDirection}
+                                            onSort={onSort}
+                                        >
+                                            Instructor
+                                        </SortButton>
+                                    </div>
+                                    <div className="col-span-1">
+                                        <SortButton
+                                            field="credit_hours"
+                                            currentSortField={sortField}
+                                            currentSortDirection={sortDirection}
+                                            onSort={onSort}
+                                        >
+                                            Credits
+                                        </SortButton>
+                                    </div>
+                                    <div className="col-span-2">
+                                        <div className="h-auto p-1 font-sans font-bold text-sm text-gray-700 text-left">Schedule</div>
+                                    </div>
+                                    <div className="col-span-2">
+                                        <SortButton
+                                            field="enrolled"
+                                            currentSortField={sortField}
+                                            currentSortDirection={sortDirection}
+                                            onSort={onSort}
+                                        >
+                                            Availability
+                                        </SortButton>
+                                    </div>
+                                </div>
                             </div>
                         </div>
+
+                        {isTableHeaderSticky && <div className="h-[52px]" />}
+
+                        <div className="divide-y divide-gray-100">
+                            {courses.map((course, index) => (
+                                <CourseRow key={course.id} course={course} index={index} onSelect={onCourseSelect} />
+                            ))}
+                        </div>
                     </div>
-                </div>
-
-                {isTableHeaderSticky && <div className="h-[52px]" />}
-
-                <div className="divide-y divide-gray-100">
-                    {courses.map((course, index) => (
-                        <CourseRow key={course.id} course={course} index={index} onSelect={onCourseSelect} />
-                    ))}
                 </div>
             </div>
         )
