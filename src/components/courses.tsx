@@ -101,8 +101,8 @@ export default function Courses() {
 
             switch (field) {
                 case "course_code":
-                    aValue = a.course_code
-                    bValue = b.course_code
+                    aValue = `${a.course_dept} ${a.course_code} ${a.class_section}`
+                    bValue = `${b.course_dept} ${b.course_code} ${b.class_section}`
                     break
                 case "course_title":
                     aValue = a.course_title
@@ -121,8 +121,8 @@ export default function Courses() {
                     bValue = parseInt(b.enrolled) || 0
                     break
                 default:
-                    aValue = a.course_code
-                    bValue = b.course_code
+                    aValue = `${a.course_dept} ${a.course_code} ${a.class_section}`
+                    bValue = `${b.course_dept} ${b.course_code} ${b.class_section}`
             }
 
             if (typeof aValue === "string" && typeof bValue === "string") {

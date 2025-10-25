@@ -57,7 +57,7 @@ function CourseRow({ course, index, onSelect }: { course: Course; index: number;
                 <div className="col-span-2 min-w-[120px]">
                     <div className="flex flex-col">
                         <span className="font-mono font-semibold text-blue-600 text-sm">
-                            {course.course_dept} {course.course_code}
+                            {course.course_dept} {course.course_code} {course.class_section}
                         </span>
                         <Badge
                             variant="secondary"
