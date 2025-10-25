@@ -1,17 +1,13 @@
 "use client"
 
-import { useEffect, useState, useMemo } from "react"
+import { useEffect, useState } from "react"
 import { Course, SortField, SortDirection } from "@/lib/types"
-import { mockCourses } from "@/lib/mock-data"
-import { getDepartments } from "@/lib/course-utils"
 // import { filterAndSortCourses, initFuse } from "@/lib/search-utils"
 import { useSticky } from "@/lib/use-sticky"
-import { useDebounce } from "@/lib/use-debounce"
 import { CourseSearch } from "./course-search"
 import { ViewportCourseTable } from "./viewport-course-table"
 import { CourseDetailDialog } from "./course-detail-dialog"
 import { EmptyState } from "./empty-state"
-import { sanitizeQuery } from "@/lib/utils"
 
 // const handleSearch = async (query: string) => {
 

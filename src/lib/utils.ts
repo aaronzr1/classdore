@@ -34,8 +34,10 @@ export function parseSearchQuery(query: string): ParsedQuery {
 
 export function sanitizeQuery(query: string): string {
     query = query.replaceAll("-", " "); // disable dash syntax
-    query = query.replaceAll(/[–—…«»'']/g, " "); // misc
-    query = query.replaceAll(/[""]/g, '"'); // smart quotes
+    // query = query.replaceAll(/[–—…«»'']/g, " "); // misc
+    // query = query.replaceAll(/[""]/g, '"'); // smart quotes
+    query = query.replaceAll(/[–—…«»‘’]/g, " "); // misc
+    query = query.replaceAll(/[“”]/g, '"'); // smart quotes
 
     // add prefix match pattern for the last word
     if (query.length >= 2 && /\w{2}/.test(query.slice(-2))) {

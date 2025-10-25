@@ -244,7 +244,7 @@ export async function searchCourses(query: string, dept: string, school: string,
             const { parseSearchQuery } = await import('./utils');
             const parsed = parseSearchQuery(query);
 
-            if (parsed.type === 'course_code_prefix') {
+            if (parsed.type === 'course_code_prefix' && parsed.codePrefix) {
                 // Build a field-specific query for course codes
                 const prefix = parsed.codePrefix;
 
