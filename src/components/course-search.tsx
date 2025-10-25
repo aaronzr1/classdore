@@ -1,6 +1,6 @@
 "use client"
 
-import { forwardRef } from "react"
+import { forwardRef, useState } from "react"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Search, Filter } from "lucide-react"
@@ -38,6 +38,17 @@ export const CourseSearch = forwardRef<HTMLDivElement, CourseSearchProps>(
         },
         ref
     ) => {
+        const [deptSearch, setDeptSearch] = useState("")
+        const [schoolSearch, setSchoolSearch] = useState("")
+
+        const filteredDepartments = departments.filter((dept) =>
+            dept.toLowerCase().includes(deptSearch.toLowerCase())
+        )
+
+        const filteredSchools = schools.filter((school) =>
+            school.toLowerCase().includes(schoolSearch.toLowerCase())
+        )
+
         return (
             <div
                 ref={ref}
@@ -67,13 +78,33 @@ export const CourseSearch = forwardRef<HTMLDivElement, CourseSearchProps>(
                                     <Filter className="mr-2 h-4 w-4" />
                                     <SelectValue placeholder="Department" />
                                 </SelectTrigger>
-                                <SelectContent className="max-h-[300px] overflow-y-auto">
-                                    <SelectItem value="all">All Dept</SelectItem>
-                                    {departments.map((dept) => (
-                                        <SelectItem key={dept} value={dept}>
-                                            {dept}
-                                        </SelectItem>
-                                    ))}
+                                <SelectContent className="max-h-[300px]">
+                                    <div className="sticky top-0 bg-white p-2 border-b">
+                                        <div className="relative">
+                                            <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-3.5 w-3.5 text-gray-400" />
+                                            <Input
+                                                placeholder="Search departments..."
+                                                value={deptSearch}
+                                                onChange={(e) => setDeptSearch(e.target.value)}
+                                                className="h-8 text-sm pl-8"
+                                                onClick={(e) => e.stopPropagation()}
+                                                onKeyDown={(e) => e.stopPropagation()}
+                                            />
+                                        </div>
+                                    </div>
+                                    <div className="max-h-[240px] overflow-y-auto">
+                                        <SelectItem value="all">All Dept</SelectItem>
+                                        {filteredDepartments.map((dept) => (
+                                            <SelectItem key={dept} value={dept}>
+                                                {dept}
+                                            </SelectItem>
+                                        ))}
+                                        {filteredDepartments.length === 0 && (
+                                            <div className="py-6 text-center text-sm text-gray-500">
+                                                No departments found
+                                            </div>
+                                        )}
+                                    </div>
                                 </SelectContent>
                             </Select>
                         </div>
@@ -82,15 +113,33 @@ export const CourseSearch = forwardRef<HTMLDivElement, CourseSearchProps>(
                                 <SelectTrigger className="w-full font-serif">
                                     <SelectValue placeholder="School" />
                                 </SelectTrigger>
-                                <SelectContent className="max-h-[300px] overflow-y-auto">
-                                    <SelectItem value="all">All Schools</SelectItem>
-                                    {schools.map((school) => (
-                                        <SelectItem key={school} value={school}>
-                                            {school}
-                                        </SelectItem>
-                                    ))}
-                                    {/* <SelectItem value="Undergraduate">Undergraduate</SelectItem>
-                                    <SelectItem value="Graduate">Graduate</SelectItem> */}
+                                <SelectContent className="max-h-[300px]">
+                                    <div className="sticky top-0 bg-white p-2 border-b">
+                                        <div className="relative">
+                                            <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-3.5 w-3.5 text-gray-400" />
+                                            <Input
+                                                placeholder="Search schools..."
+                                                value={schoolSearch}
+                                                onChange={(e) => setSchoolSearch(e.target.value)}
+                                                className="h-8 text-sm pl-8"
+                                                onClick={(e) => e.stopPropagation()}
+                                                onKeyDown={(e) => e.stopPropagation()}
+                                            />
+                                        </div>
+                                    </div>
+                                    <div className="max-h-[240px] overflow-y-auto">
+                                        <SelectItem value="all">All Schools</SelectItem>
+                                        {filteredSchools.map((school) => (
+                                            <SelectItem key={school} value={school}>
+                                                {school}
+                                            </SelectItem>
+                                        ))}
+                                        {filteredSchools.length === 0 && (
+                                            <div className="py-6 text-center text-sm text-gray-500">
+                                                No schools found
+                                            </div>
+                                        )}
+                                    </div>
                                 </SelectContent>
                             </Select>
                         </div>
