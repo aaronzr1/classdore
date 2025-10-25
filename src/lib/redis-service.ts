@@ -234,20 +234,63 @@ export async function getAllCourses(): Promise<Course[]> {
     }
 }
 // Legacy search function for backward compatibility
-export async function searchCourses(query: string, dept: string, school: string, sortField?: SortField, sortDirection?: SortDirection): Promise<Course[] | null> {
+export async function searchCourses(query: string, dept: string, school: string, broadSearch: boolean = true, sortField?: SortField, sortDirection?: SortDirection): Promise<Course[] | null> {
     const client = await getRedisClient();
     try {
+        let redisQuery = query;
 
+        // If not using broad search, try to detect course code patterns
+        if (!broadSearch && query && query !== "*") {
+            const { parseSearchQuery } = await import('./utils');
+            const parsed = parseSearchQuery(query);
+
+            if (parsed.type === 'course_code_prefix') {
+                // Build a field-specific query for course codes
+                const prefix = parsed.codePrefix;
+
+                // For single-digit prefixes, expand to all two-digit combinations
+                // e.g., "3" becomes "(30* | 31* | 32* | ... | 39*)"
+                // This works around RediSearch limitations with very short prefixes
+                if (prefix.length === 1) {
+                    const expansions = [];
+                    for (let i = 0; i <= 9; i++) {
+                        expansions.push(`${prefix}${i}*`);
+                    }
+                    redisQuery = `@course_dept_tag:{${parsed.dept}} (@course_code:${expansions.join(' | @course_code:')})`;
+                    console.log("Detected single-digit course code pattern - expanding to two-digit prefixes");
+                } else {
+                    // For multi-digit prefixes, use simple wildcard
+                    redisQuery = `@course_dept_tag:{${parsed.dept}} @course_code:${prefix}*`;
+                }
+
+                console.log("Detected course code pattern - dept:", parsed.dept, "prefix:", parsed.codePrefix);
+                console.log("Using course code prefix search:", redisQuery);
+            } else {
+                // For non-pattern queries when not in broad search, still use sanitized search
+                const { sanitizeQuery } = await import('./utils');
+                redisQuery = sanitizeQuery(query);
+                console.log("Using general non-broad search with sanitization");
+            }
+        } else if (broadSearch && query && query !== "*") {
+            // Apply sanitization for broad search
+            const { sanitizeQuery } = await import('./utils');
+            redisQuery = sanitizeQuery(query);
+            console.log("Using broad search with sanitization");
+        }
+
+        // Apply school and dept filters (unless already specified in course code search)
         if (school && school !== "all") {
-            query = (query === "*") ? `@school_tag:{${school}}` : `@school_tag:{${school}} ${query}`
-        }
-        
-        if (dept && dept !== "all") {
-            query = (query === "*") ? `@course_dept_tag:{${dept}}` : `@course_dept_tag:{${dept}} ${query}`
+            redisQuery = (redisQuery === "*") ? `@school_tag:{${school}}` : `@school_tag:{${school}} ${redisQuery}`
         }
 
-        console.log("Querying:", query);
-        
+        // Only add dept filter if not already part of a course code search
+        if (dept && dept !== "all" && !redisQuery.includes("@course_dept_tag")) {
+            redisQuery = (redisQuery === "*") ? `@course_dept_tag:{${dept}}` : `@course_dept_tag:{${dept}} ${redisQuery}`
+        }
+
+        console.log("Final Redis query:", redisQuery);
+        console.log("BroadSearch mode:", broadSearch);
+
         const searchOptions: Record<string, unknown> = {
             LIMIT: { from: 0, size: 10000 }
         };
@@ -262,7 +305,7 @@ export async function searchCourses(query: string, dept: string, school: string,
 
         const result = await client.ft.search(
             "idx:courses",
-            query,
+            redisQuery,
             searchOptions
         );
 

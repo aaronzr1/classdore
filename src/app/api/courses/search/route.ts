@@ -7,6 +7,7 @@ export async function GET(req: Request) {
     const keywords = searchParams.get("keywords") || "*";
     const dept = searchParams.get("dept") || "all";
     const school = searchParams.get("school") || "all";
+    const broadSearch = searchParams.get("broadSearch") === "true";
     const sortField = searchParams.get("sortField") || "course_code";
     const sortDirection = searchParams.get("sortDirection") || "asc";
 
@@ -25,6 +26,7 @@ export async function GET(req: Request) {
             keywords,
             dept,
             school,
+            broadSearch,
             sortField as SortField,
             sortDirection as SortDirection
         );

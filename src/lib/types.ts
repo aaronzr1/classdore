@@ -72,6 +72,7 @@ export interface CourseSearchRequest {
     query?: string
     department?: string
     school?: string
+    broadSearch?: boolean
     limit?: number
     offset?: number
     sortField?: SortField

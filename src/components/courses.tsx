@@ -55,6 +55,7 @@ export default function Courses() {
     const [searchTerm, setSearchTerm] = useState("")
     const [selectedDepartment, setSelectedDepartment] = useState<string>("all") // filter
     const [selectedSchool, setSelectedSchool] = useState<string>("all") // filter
+    const [broadSearch, setBroadSearch] = useState<boolean>(false) // false = precise course code matching
     const [sortField, setSortField] = useState<SortField>("course_code")
     const [sortDirection, setSortDirection] = useState<SortDirection>("asc")
     const [selectedCourse, setSelectedCourse] = useState<Course | null>(null)
@@ -156,19 +157,10 @@ export default function Courses() {
                 return
             }
 
-            query = sanitizeQuery(query) // optional sanitization
-            if (!query.trim() && dept == "all" && school == "all") {
-                console.log("Single character query, fetching all courses")
-                const response = await fetch(`/api/courses?sortField=${sortField}&sortDirection=${sortDirection}`)
-                const courses = await response.json()
-                setSearchResults(courses)
-                return
-            }
-
-            console.log("Searching backend for:", query)
+            console.log("Searching backend for:", query, "broadSearch:", broadSearch)
             setIsLoading(true)
 
-            const response = await fetch(`/api/courses/search?keywords=${encodeURIComponent(query)}&dept=${dept}&school=${school}&sortField=${sortField}&sortDirection=${sortDirection}`)
+            const response = await fetch(`/api/courses/search?keywords=${encodeURIComponent(query)}&dept=${dept}&school=${school}&broadSearch=${broadSearch}&sortField=${sortField}&sortDirection=${sortDirection}`)
             const courses = await response.json()
 
             if (Array.isArray(courses)) {
@@ -186,10 +178,10 @@ export default function Courses() {
         }
     }
 
-    // Trigger search only when search term, department, or school changes
+    // Trigger search when search term, department, school, or broad search changes
     useEffect(() => {
         handleSearch(searchTerm, selectedDepartment, selectedSchool)
-    }, [searchTerm, selectedDepartment, selectedSchool])
+    }, [searchTerm, selectedDepartment, selectedSchool, broadSearch])
 
     // Handle local sorting when only sortField or sortDirection changes
     useEffect(() => {
@@ -222,6 +214,8 @@ export default function Courses() {
                 totalCount={searchResults.length}
                 isSearchSticky={isSearchSticky}
                 isSearching={isSearching}
+                broadSearch={broadSearch}
+                setBroadSearch={setBroadSearch}
             />
 
             {isSearchSticky && <div className="h-[120px] mb-4" />}

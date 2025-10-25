@@ -18,6 +18,8 @@ interface CourseSearchProps {
     totalCount: number
     isSearchSticky: boolean
     isSearching?: boolean
+    broadSearch: boolean
+    setBroadSearch: (value: boolean) => void
 }
 
 export const CourseSearch = forwardRef<HTMLDivElement, CourseSearchProps>(
@@ -35,6 +37,8 @@ export const CourseSearch = forwardRef<HTMLDivElement, CourseSearchProps>(
             totalCount,
             isSearchSticky,
             isSearching = false,
+            broadSearch,
+            setBroadSearch,
         },
         ref
     ) => {
@@ -66,7 +70,7 @@ export const CourseSearch = forwardRef<HTMLDivElement, CourseSearchProps>(
                         <div className="flex-1 min-w-0 relative">
                             <Search className={`absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 ${isSearching ? 'text-blue-500 animate-pulse' : 'text-gray-400'}`} />
                             <Input
-                                placeholder="Search courses, instructors, or course codes..."
+                                placeholder='Search topics, instructors, anything (try "ECON 3" or "travel classes")'
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                                 className={`pl-10 font-serif w-full ${isSearching ? 'border-blue-300' : ''}`}
@@ -144,10 +148,19 @@ export const CourseSearch = forwardRef<HTMLDivElement, CourseSearchProps>(
                             </Select>
                         </div>
                     </div>
-                    <div className="mt-3 pt-3 border-t border-gray-100">
+                    <div className="mt-3 pt-3 border-t border-gray-100 flex items-center justify-between gap-4 flex-wrap">
                         <p className="font-serif text-gray-600 text-sm">
                             Showing {filteredCount} of {totalCount} courses
                         </p>
+                        <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer hover:text-gray-900 transition-colors">
+                            <input
+                                type="checkbox"
+                                checked={broadSearch}
+                                onChange={(e) => setBroadSearch(e.target.checked)}
+                                className="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                            />
+                            <span className="font-serif">Broad search</span>
+                        </label>
                     </div>
                 </div>
             </div>
