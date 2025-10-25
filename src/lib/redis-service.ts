@@ -1,4 +1,4 @@
-import { createClient } from "redis";
+import { createClient, RedisClientType } from "redis";
 import { Course, CourseSearchRequest, CourseSearchResponse, CourseTableItem, SortField, SortDirection } from "@/lib/types";
 import dotenv from "dotenv";
 import pako from "pako"; // For zlib/gzip decompression
@@ -12,11 +12,21 @@ const redisClient = createClient({
 redisClient.on("error", (err: Error) => console.error("Redis Client Error", err));
 
 let isConnected = false;
+let connectionPromise: Promise<void> | null = null;
 export async function getRedisClient() {
     if (!isConnected) {
-        await redisClient.connect();
-        isConnected = true;
-        console.log("Redis connected");
+        // If there's already a connection attempt in progress, wait for it
+        if (connectionPromise) {
+            await connectionPromise;
+        } else {
+            // Start a new connection attempt
+            connectionPromise = redisClient.connect().then(() => {
+                isConnected = true;
+                connectionPromise = null;
+                console.log("Redis connected");
+            });
+            await connectionPromise;
+        }
     }
     return redisClient;
 }
@@ -229,11 +239,11 @@ export async function searchCourses(query: string, dept: string, school: string)
     try {
 
         if (school && school !== "all") {
-            query = `@school_tag:{${school}} ${query}`;
+            query = (query === "*") ? `@school_tag:{${school}}` : `@school_tag:{${school}} ${query}`
         }
-          
+        
         if (dept && dept !== "all") {
-            query = `@course_dept_tag:{${dept}} ${query}`;
+            query = (query === "*") ? `@course_dept_tag:{${dept}}` : `@course_dept_tag:{${dept}} ${query}`
         }
 
         console.log("Querying:", query);

@@ -1,14 +1,20 @@
 import { NextResponse } from "next/server";
-import { searchCourses, searchCoursesOptimized } from "@/lib/redis-service";
+import { getAllCourses, searchCourses, searchCoursesOptimized } from "@/lib/redis-service";
 
 export async function GET(req: Request) {
     const { searchParams } = new URL(req.url);
-    const keywords = searchParams.get("keywords");
+    const keywords = searchParams.get("keywords") || "*";
     const dept = searchParams.get("dept") || "all";
     const school = searchParams.get("school") || "all";
 
-    if (!keywords) {
-        return NextResponse.json({ error: "Search query is required" }, { status: 400 });
+    if (keywords === "*" && dept === "all" && school === "all") { // shouldn't happen
+        try {
+            const courses = await getAllCourses();
+            return NextResponse.json(courses);
+        } catch (err) {
+            console.error("Error fetching all courses:", err);
+            return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+        }
     }
 
     try {
