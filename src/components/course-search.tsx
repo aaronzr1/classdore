@@ -44,6 +44,7 @@ export const CourseSearch = forwardRef<HTMLDivElement, CourseSearchProps>(
     ) => {
         const [deptSearch, setDeptSearch] = useState("")
         const [schoolSearch, setSchoolSearch] = useState("")
+        const [showBroadSearchTooltip, setShowBroadSearchTooltip] = useState(false)
 
         const filteredDepartments = departments.filter((dept) =>
             dept.toLowerCase().includes(deptSearch.toLowerCase())
@@ -159,7 +160,19 @@ export const CourseSearch = forwardRef<HTMLDivElement, CourseSearchProps>(
                                 onChange={(e) => setBroadSearch(e.target.checked)}
                                 className="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
                             />
-                            <span className="font-serif">Broad search</span>
+                            <span
+                                className="font-serif relative inline-block border-b border-dotted border-gray-400 hover:border-gray-700 transition-colors"
+                                onMouseEnter={() => setShowBroadSearchTooltip(true)}
+                                onMouseLeave={() => setShowBroadSearchTooltip(false)}
+                            >
+                                Broad search
+                                {showBroadSearchTooltip && (
+                                    <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-900 text-white text-xs rounded shadow-lg w-50 z-10 pointer-events-none">
+                                        Searching "econ 3" surfaces "ECON 3XXX" courses by default. Broad search disables this specialized search.
+                                        <span className="absolute top-full left-1/2 transform -translate-x-1/2 -mt-1 border-4 border-transparent border-t-gray-900"></span>
+                                    </span>
+                                )}
+                            </span>
                         </label>
                     </div>
                 </div>

@@ -65,6 +65,7 @@ export default function Courses() {
     const [allSchools, setAllSchools] = useState<string[]>([])
     const [isLoading, setIsLoading] = useState(true) // loading indicator for initial load
     const [searchResults, setSearchResults] = useState<Course[]>([])
+    const [initialTotalCount, setInitialTotalCount] = useState<number>(0) // store initial course count
     
     // debouncing: immediate on first keystroke, then wait 300ms
     // const debouncedSearchTerm = useDebounce(searchTerm, 300)
@@ -154,6 +155,10 @@ export default function Courses() {
                 const response = await fetch(`/api/courses?sortField=${sortField}&sortDirection=${sortDirection}`)
                 const courses = await response.json()
                 setSearchResults(courses)
+                // Store initial total count if not already set
+                if (initialTotalCount === 0) {
+                    setInitialTotalCount(courses.length)
+                }
                 return
             }
 
@@ -210,8 +215,8 @@ export default function Courses() {
                 setSelectedSchool={setSelectedSchool}
                 departments={allDepartments}
                 schools={allSchools}
-                filteredCount={searchResults.length} // TODO: filter/sort
-                totalCount={searchResults.length}
+                filteredCount={searchResults.length}
+                totalCount={initialTotalCount}
                 isSearchSticky={isSearchSticky}
                 isSearching={isSearching}
                 broadSearch={broadSearch}
