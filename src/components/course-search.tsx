@@ -46,7 +46,7 @@ export const CourseSearch = forwardRef<HTMLDivElement, CourseSearchProps>(
                 }`}
             >
                 <div className={`${isSearchSticky ? "container mx-auto px-4" : ""}`}>
-                    <div className="flex flex-col lg:flex-row gap-3 items-center w-full">
+                    <div className="flex flex-col sm:flex-row gap-3 items-center w-full">
                         {isSearchSticky && (
                             <div className="flex-shrink-0">
                                 <h2 className="font-sans text-xl font-bold text-blue-600">Classdore</h2>
@@ -58,17 +58,17 @@ export const CourseSearch = forwardRef<HTMLDivElement, CourseSearchProps>(
                                 placeholder="Search courses, instructors, or course codes..."
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
-                                className={`pl-10 font-serif ${isSearching ? 'border-blue-300' : ''}`}
+                                className={`pl-10 font-serif w-full ${isSearching ? 'border-blue-300' : ''}`}
                             />
                         </div>
-                        <div className="shrink-0">
+                        <div className="flex-shrink-0" style={{ width: 'min(20%, 140px)', minWidth: '60px' }}>
                             <Select value={selectedDepartment} onValueChange={setSelectedDepartment}>
-                                <SelectTrigger className="!w-[20vw] !min-w-[140px] !max-w-40 font-serif">
+                                <SelectTrigger className="w-full font-serif">
                                     <Filter className="mr-2 h-4 w-4" />
                                     <SelectValue placeholder="Department" />
                                 </SelectTrigger>
                                 <SelectContent className="max-h-[300px] overflow-y-auto">
-                                    <SelectItem value="all">All Departments</SelectItem>
+                                    <SelectItem value="all">All Dept</SelectItem>
                                     {departments.map((dept) => (
                                         <SelectItem key={dept} value={dept}>
                                             {dept}
@@ -77,9 +77,9 @@ export const CourseSearch = forwardRef<HTMLDivElement, CourseSearchProps>(
                                 </SelectContent>
                             </Select>
                         </div>
-                        <div className="shrink-0">
+                        <div className="flex-shrink-0" style={{ width: 'min(20%, 140px)', minWidth: '50px' }}>
                             <Select value={selectedSchool} onValueChange={setSelectedSchool}>
-                                <SelectTrigger className="!w-[15vw] !min-w-[120px] !max-w-40 font-serif">
+                                <SelectTrigger className="w-full font-serif">
                                     <SelectValue placeholder="School" />
                                 </SelectTrigger>
                                 <SelectContent className="max-h-[300px] overflow-y-auto">
