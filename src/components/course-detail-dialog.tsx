@@ -2,8 +2,11 @@
 
 import { Badge } from "@/components/ui/badge"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { Calendar, MapPin, GraduationCap } from "lucide-react"
+import { Calendar, MapPin, GraduationCap, Plus, X } from "lucide-react"
 import { Course } from "@/lib/types"
+import { Button } from "./ui/button"
+import { getAddCourseUrl, parseCourseId } from "@/lib/course-utils"
+import { toast } from "sonner"
 
 interface CourseDetailDialogProps {
     course: Course | null
@@ -14,12 +17,65 @@ export function CourseDetailDialog({ course, onClose }: CourseDetailDialogProps)
     if (!course) return null
 
     const enrollmentRatio = Number.parseInt(course.enrolled) / Number.parseInt(course.capacity)
+    const classInfo = parseCourseId(course.id)
+    const addCourseUrl = getAddCourseUrl(course.id)
+
+    const handleAddCourse = (e: React.MouseEvent) => {
+        e.stopPropagation()
+
+        if (!classInfo) {
+            toast.error("Unable to add course - invalid course ID")
+            return
+        }
+
+        // Open the add URL in a new window to process the request (handles 302 redirect)
+        const addWindow = window.open(addCourseUrl, '_blank', 'width=800,height=600')
+
+        // After a brief delay to let the request process, redirect to the cart page
+        setTimeout(() => {
+            if (addWindow && !addWindow.closed) {
+                addWindow.location.href = 'https://more.app.vanderbilt.edu/more/SearchClasses.action'
+            }
+
+            // Show success toast with link to cart
+            const toastId = toast.success(
+                <div className="relative min-w-[225px] max-w-fit">
+                    <button
+                        onClick={(e) => {
+                            e.stopPropagation()
+                            toast.dismiss(toastId)
+                        }}
+                        className="absolute top-0 right-0 text-gray-400 hover:text-gray-600 transition-colors p-0.5 rounded-sm hover:bg-gray-100"
+                        aria-label="Dismiss"
+                    >
+                        <X className="w-3 h-3" />
+                    </button>
+                    <div className="flex flex-col gap-1 pr-5">
+                        <div className="font-semibold">Course added to cart!</div>
+                        <a
+                            href="https://more.app.vanderbilt.edu/more/SearchClasses.action"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-blue-600 hover:underline text-sm"
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            View your cart →
+                        </a>
+                    </div>
+                </div>,
+                {
+                    duration: 3000,
+                    className: '!w-auto !max-w-fit justify-center',
+                }
+            )
+        }, 500)
+    }
 
     return (
         <Dialog open={!!course} onOpenChange={onClose}>
             {/* note: adjusting width here does nothing, check DialogPrimitive.Content in dialog.tsx (twMerge issue) */}
             <DialogContent className="w-[95vw] max-w-[95vw] max-h-[95vh] overflow-y-auto">
-            {/* <DialogContent 
+                {/* <DialogContent 
                 className="max-h-[95vh] overflow-y-auto"
                 style={{
                     width: '50vw',
@@ -49,16 +105,25 @@ export function CourseDetailDialog({ course, onClose }: CourseDetailDialogProps)
                                 {course.credit_hours} Credits
                             </Badge>
                             <Badge
-                                className={`font-serif ${
-                                    course.status === "Open"
-                                        ? "bg-green-100 text-green-800"
-                                        : course.status === "Waitlist"
+                                className={`font-serif ${course.status === "Open"
+                                    ? "bg-green-100 text-green-800"
+                                    : course.status === "Waitlist"
                                         ? "bg-yellow-100 text-yellow-800"
                                         : "bg-red-100 text-red-800"
-                                }`}
+                                    }`}
                             >
                                 {course.status}
                             </Badge>
+
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={handleAddCourse}
+                                className="ml-auto h-7 px-3 text-xs font-sans text-blue-600 border-blue-200 hover:bg-blue-50 hover:text-blue-700 hover:border-blue-300 bg-transparent"
+                            >
+                                <Plus className="w-3 h-3 mr-1.5" />
+                                Add to Cart
+                            </Button>
                         </div>
                     </DialogHeader>
 
@@ -109,13 +174,12 @@ export function CourseDetailDialog({ course, onClose }: CourseDetailDialogProps)
                                     </div>
                                     <div className="w-full bg-gray-200 rounded-full h-2">
                                         <div
-                                            className={`h-2 rounded-full ${
-                                                enrollmentRatio > 0.9
-                                                    ? "bg-red-500"
-                                                    : enrollmentRatio > 0.7
+                                            className={`h-2 rounded-full ${enrollmentRatio > 0.9
+                                                ? "bg-red-500"
+                                                : enrollmentRatio > 0.7
                                                     ? "bg-yellow-500"
                                                     : "bg-blue-600"
-                                            }`}
+                                                }`}
                                             style={{
                                                 width: `${enrollmentRatio * 100}%`,
                                             }}

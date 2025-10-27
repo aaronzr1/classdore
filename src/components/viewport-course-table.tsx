@@ -3,8 +3,10 @@
 import { forwardRef, useRef, useEffect, useState, useCallback } from "react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { ChevronUp, ChevronDown, Clock, Users, Plus } from "lucide-react"
+import { ChevronUp, ChevronDown, Clock, Users, Plus, X } from "lucide-react"
 import { Course, SortField, SortDirection } from "@/lib/types"
+import { toast } from "sonner"
+import { getAddCourseUrl, parseCourseId } from "@/lib/course-utils"
 
 interface ViewportCourseTableProps {
     courses: Course[]
@@ -52,24 +54,60 @@ interface ViewportCourseRowProps {
 
 function ViewportCourseRow({ course, index, onSelect, isVisible }: ViewportCourseRowProps) {
     const enrollmentRatio = Number.parseInt(course.enrolled) / Number.parseInt(course.capacity)
+    const classInfo = parseCourseId(course.id)
+    const addCourseUrl = getAddCourseUrl(course.id)
 
-    // Parse course.id to extract classNumber and selectedTermCode
-    // Format: cn{classNumber}tc{selectedTermCode}
-    const parseClassId = (id: string) => {
-        const match = id.match(/cn(\d+)tc(\d+)/)
-        if (match) {
-            return {
-                classNumber: match[1],
-                selectedTermCode: match[2]
-            }
+    const handleAddCourse = (e: React.MouseEvent) => {
+        e.stopPropagation()
+
+        if (!classInfo) {
+            toast.error("Unable to add course - invalid course ID")
+            return
         }
-        return null
+
+        // Open the add URL in a new window to process the request (handles 302 redirect)
+        const addWindow = window.open(addCourseUrl, '_blank', 'width=800,height=600')
+
+        // After a brief delay to let the request process, redirect to the cart page
+        setTimeout(() => {
+    if (addWindow && !addWindow.closed) {
+        addWindow.location.href = 'https://more.app.vanderbilt.edu/more/SearchClasses.action'
     }
 
-    const classInfo = parseClassId(course.id)
-    const addCourseUrl = classInfo
-        ? `https://more.app.vanderbilt.edu/more/StudentClassExecute!add.action?classNumber=${classInfo.classNumber}&selectedTermCode=${classInfo.selectedTermCode}`
-        : "#"
+    // Show success toast with link to cart
+    const toastId = toast.success(
+        <div className="relative min-w-[225px] max-w-fit">
+            <button
+                onClick={(e) => {
+                    e.stopPropagation()
+                    toast.dismiss(toastId)
+                }}
+                className="absolute top-0 right-0 text-gray-400 hover:text-gray-600 transition-colors p-0.5 rounded-sm hover:bg-gray-100"
+                aria-label="Dismiss"
+            >
+                <X className="w-3 h-3" />
+            </button>
+            <div className="flex flex-col gap-1 pr-5">
+                <div className="font-semibold">Course added to cart!</div>
+                <a
+                    href="https://more.app.vanderbilt.edu/more/SearchClasses.action"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-600 hover:underline text-sm"
+                    onClick={(e) => e.stopPropagation()}
+                >
+                    View your cart →
+                </a>
+            </div>
+        </div>,
+        {
+            duration: 3000,
+            className: '!w-auto !max-w-fit justify-center', // 👈 shrinks background to content
+        }
+    )
+}, 500)
+
+    }
 
     // If not visible, render a placeholder with the same height
     if (!isVisible) {
@@ -94,13 +132,11 @@ function ViewportCourseRow({ course, index, onSelect, isVisible }: ViewportCours
                 <Button
                     variant="ghost"
                     size="sm"
-                    asChild
                     className="h-5 w-5 p-0 text-gray-300 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors"
-                    onClick={(e) => e.stopPropagation()}
+                    onClick={handleAddCourse}
+                    title="Add to cart"
                 >
-                    <a href={addCourseUrl} target="_blank" rel="noopener noreferrer" title="Add to cart">
-                        <Plus className="w-3 h-3" />
-                    </a>
+                    <Plus className="w-3 h-3" />
                 </Button>
             </div>
 
@@ -113,12 +149,12 @@ function ViewportCourseRow({ course, index, onSelect, isVisible }: ViewportCours
                         </span>
                         <Badge
                             variant="secondary"
-                            className={`text-xs w-fit mt-1 ${course.career === "Graduate"
+                            className={`text-xs w-fit mt-1 max-w-[105px] text-left justify-start ${course.career === "Graduate"
                                 ? "bg-blue-100 text-blue-800"
                                 : "bg-gray-100 text-gray-700"
                                 }`}
                         >
-                            {course.career}
+                            <span className="block truncate min-w-0">{course.career}</span>
                         </Badge>
                     </div>
                 </div>
