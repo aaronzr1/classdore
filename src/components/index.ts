@@ -1,5 +1,5 @@
 export { Courses } from "./courses"
 export { CourseSearch } from "./course-search"
-export { CourseTable } from "./course-table"
+// export { CourseTable } from "./course-table"
 export { CourseDetailDialog } from "./course-detail-dialog"
 export { EmptyState } from "./empty-state"

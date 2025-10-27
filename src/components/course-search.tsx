@@ -71,7 +71,7 @@ export const CourseSearch = forwardRef<HTMLDivElement, CourseSearchProps>(
                         <div className="flex-1 min-w-[120px] relative">
                             <Search className={`absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 ${isSearching ? 'text-blue-500 animate-pulse' : 'text-gray-400'}`} />
                             <Input
-                                placeholder='Search topics, instructors, anything (try "ECON 3" or "travel classes")'
+                                placeholder="Search topics, instructors, anything (try &quot;ECON 3&quot; or &quot;travel class&quot;)"
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                                 className={`pl-10 ${searchTerm ? 'pr-8' : 'pr-3'} font-serif w-full ${isSearching ? 'border-blue-300' : ''}`}

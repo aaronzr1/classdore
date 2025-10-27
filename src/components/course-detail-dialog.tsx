@@ -18,7 +18,7 @@ export function CourseDetailDialog({ course, onClose }: CourseDetailDialogProps)
     return (
         <Dialog open={!!course} onOpenChange={onClose}>
             {/* note: adjusting width here does nothing, check DialogPrimitive.Content in dialog.tsx (twMerge issue) */}
-            <DialogContent className="w-[95vw] max-w-[95vw] max-h-[95vh] overflow-y-auto"> 
+            <DialogContent className="w-[95vw] max-w-[95vw] max-h-[95vh] overflow-y-auto">
             {/* <DialogContent 
                 className="max-h-[95vh] overflow-y-auto"
                 style={{
