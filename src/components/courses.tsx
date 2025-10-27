@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
 import { Course, SortField, SortDirection } from "@/lib/types"
 // import { filterAndSortCourses, initFuse } from "@/lib/search-utils"
 import { useSticky } from "@/lib/use-sticky"
+import { useDebounce } from "@/lib/use-debounce"
 import { CourseSearch } from "./course-search"
 import { ViewportCourseTable } from "./viewport-course-table"
 import { CourseDetailDialog } from "./course-detail-dialog"
@@ -62,9 +63,9 @@ export default function Courses() {
     const [isLoading, setIsLoading] = useState(true) // loading indicator for initial load
     const [searchResults, setSearchResults] = useState<Course[]>([])
     const [initialTotalCount, setInitialTotalCount] = useState<number>(0) // store initial course count
-    
+
     // debouncing: immediate on first keystroke, then wait 300ms
-    // const debouncedSearchTerm = useDebounce(searchTerm, 300)
+    const debouncedSearchTerm = useDebounce(searchTerm, 150)
     const [isSearching, setIsSearching] = useState(false)
 
     const { isSearchSticky, isTableHeaderSticky, searchBarRef, tableHeaderRef } = useSticky()
@@ -181,8 +182,8 @@ export default function Courses() {
 
     // Trigger search when search term, department, school, or broad search changes
     useEffect(() => {
-        handleSearch(searchTerm, selectedDepartment, selectedSchool)
-    }, [searchTerm, selectedDepartment, selectedSchool, broadSearch])
+        handleSearch(debouncedSearchTerm, selectedDepartment, selectedSchool)
+    }, [debouncedSearchTerm, selectedDepartment, selectedSchool, broadSearch])
 
     // Handle local sorting when only sortField or sortDirection changes
     useEffect(() => {
