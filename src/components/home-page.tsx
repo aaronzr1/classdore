@@ -62,7 +62,7 @@ export const HomePage = forwardRef<HTMLDivElement, HomePageProps>(
             <h1 className="font-sans text-8xl font-bold bg-gradient-to-r from-blue-600 to-blue-500 bg-clip-text text-transparent mb-3 tracking-tight">
               Classdore
             </h1>
-            <p className="text-sm text-gray-500 tracking-wide">Fast, relevant class search</p>
+            <p className="text-sm text-gray-500 tracking-wide">Fast, relevant class search. Course listings updated daily.</p>
           </div>
 
           {/* Search Section */}
@@ -73,7 +73,7 @@ export const HomePage = forwardRef<HTMLDivElement, HomePageProps>(
                 <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400 transition-colors group-hover:text-blue-500" />
                 <Input
                   type="search"
-                  placeholder='Search for courses, instructors, topics...'
+                  placeholder='Search topics, instructors, anything (try &quot;ECON 3&quot; or &quot;travel class&quot;)'
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="w-full h-12 pl-12 pr-4 text-base border-gray-300 rounded-full shadow-sm hover:shadow-md focus:shadow-lg transition-all duration-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
@@ -177,55 +177,39 @@ export const HomePage = forwardRef<HTMLDivElement, HomePageProps>(
           {/* Welcome Section */}
           <div className="w-full max-w-2xl animate-in fade-in duration-700 delay-200">
             <div className="bg-gradient-to-br from-blue-50 to-white rounded-2xl p-8 border border-blue-100 shadow-sm">
-              <h2 className="text-lg font-semibold text-gray-900 mb-6 flex items-center gap-2">
-                <Sparkles className="h-5 w-5 text-blue-500" />
+              <h2 className="text-base font-semibold text-gray-900 mb-4">
                 Welcome to Classdore!
               </h2>
-              <p className="text-sm text-gray-600 mb-6 leading-relaxed">
-                A days-long project to fix class search. Here are a few pointers before you search:
+              <p className="text-sm text-gray-700 mb-5 leading-relaxed">
+                What you see here is an <em className="font-medium">ongoing effort</em> to make finding classes easier. It's still a work in progress, but a few tips to get started:
               </p>
-              <div className="space-y-4">
+              <div className="space-y-3">
                 <div className="flex items-start gap-3">
-                  <div className="flex-shrink-0 w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
-                    <Zap className="h-4 w-4 text-white" />
-                  </div>
-                  <div>
-                    <h3 className="text-sm font-medium text-gray-900 mb-1">Lightning-fast semantic search</h3>
-                    <p className="text-xs text-gray-600">
-                      Type naturally—search by course code, topic, instructor name, or even describe what you're looking for
-                    </p>
-                  </div>
+                  <span className="text-blue-500 font-bold text-lg leading-none mt-0.5">•</span>
+                  <p className="text-sm text-gray-600 leading-relaxed">
+                    As of now, the primary focus is <b>class search</b>, not registration. That means stuff like the "class availability" field will be updated reasonably, but not necessarily instantly.
+                  </p>
                 </div>
                 <div className="flex items-start gap-3">
-                  <div className="flex-shrink-0 w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
-                    <Filter className="h-4 w-4 text-white" />
-                  </div>
-                  <div>
-                    <h3 className="text-sm font-medium text-gray-900 mb-1">Smart filters at your fingertips</h3>
-                    <p className="text-xs text-gray-600">
-                      Narrow down results by department or school with searchable dropdowns
-                    </p>
-                  </div>
+                  <span className="text-blue-500 font-bold text-lg leading-none mt-0.5">•</span>
+                  <p className="text-sm text-gray-600 leading-relaxed">
+                    While this website exists separate from YES, it can link to YES. Clicking "+" or "Add to cart" will save listings and open your cart in a new tab. Note this requires for you to have logged into YES somewhat recently.
+                  </p>
                 </div>
                 <div className="flex items-start gap-3">
-                  <div className="flex-shrink-0 w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
-                    <Globe className="h-4 w-4 text-white" />
-                  </div>
-                  <div>
-                    <h3 className="text-sm font-medium text-gray-900 mb-1">Click any row for details</h3>
-                    <p className="text-xs text-gray-600">
-                      View full course information, meeting times, enrollment, and add courses to your schedule
-                    </p>
-                  </div>
+                  <span className="text-blue-500 font-bold text-lg leading-none mt-0.5">•</span>
+                  <p className="text-sm text-gray-600 leading-relaxed">
+                    Bugs and missing features will probably spring up. Feel free to shoot an email at <span className="text-blue-600">[tbd]</span>. Typing anything in the search bar will bring you to the main page. Happy searching! :)
+                  </p>
                 </div>
               </div>
             </div>
           </div>
 
           {/* Subtle hint */}
-          <p className="text-xs text-gray-400 animate-in fade-in duration-700 delay-300">
+          {/* <p className="text-xs text-gray-400 animate-in fade-in duration-700 delay-300">
             Start typing to search instantly
-          </p>
+          </p> */}
         </div>
       </div>
     )

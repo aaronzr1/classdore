@@ -190,6 +190,14 @@ export default function Courses() {
         }
     }, [debouncedSearchTerm, selectedDepartment, selectedSchool, broadSearch, hasSearched])
 
+    // Handle local sorting when sortField or sortDirection changes
+    useEffect(() => {
+        if (searchResults.length > 0) {
+            const sortedResults = sortSearchResults(searchResults, sortField, sortDirection)
+            setSearchResults(sortedResults)
+        }
+    }, [sortField, sortDirection])
+
     const handleInitialSearch = () => {
         setHasSearched(true)
     }

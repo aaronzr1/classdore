@@ -3,7 +3,7 @@
 import { forwardRef, useState, useRef, useImperativeHandle, useEffect } from "react"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Search, Filter, X } from "lucide-react"
+import { Search, Filter } from "lucide-react"
 
 interface CourseSearchProps {
     searchTerm: string
@@ -93,21 +93,12 @@ export const CourseSearch = forwardRef<HTMLDivElement, CourseSearchProps>(
                                 placeholder="Search topics, instructors, anything (try &quot;ECON 3&quot; or &quot;travel class&quot;)"
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
-                                className={`pl-10 ${searchTerm ? 'pr-8' : 'pr-3'} font-serif w-full ${isSearching ? 'border-blue-300' : ''}`}
+                                className={`pl-10 pr-3 font-serif w-full ${isSearching ? 'border-blue-300' : ''}`}
                                 autoComplete="off"
                                 data-form-type="other"
                                 data-lpignore="true"
                                 data-1p-ignore
                             />
-                            {searchTerm && (
-                                <button
-                                    onClick={() => setSearchTerm('')}
-                                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
-                                    aria-label="Clear search"
-                                >
-                                    <X className="h-4 w-4" />
-                                </button>
-                            )}
                         </div>
                         <div className="flex-shrink-0" style={{ width: 'min(20%, 140px)', minWidth: '55px' }}>
                             <Select value={selectedDepartment} onValueChange={setSelectedDepartment}>
