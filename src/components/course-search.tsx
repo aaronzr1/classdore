@@ -1,6 +1,6 @@
 "use client"
 
-import { forwardRef, useState } from "react"
+import { forwardRef, useState, useRef, useImperativeHandle, useEffect } from "react"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Search, Filter, X } from "lucide-react"
@@ -45,6 +45,23 @@ export const CourseSearch = forwardRef<HTMLDivElement, CourseSearchProps>(
         const [deptSearch, setDeptSearch] = useState("")
         const [schoolSearch, setSchoolSearch] = useState("")
         const [showBroadSearchTooltip, setShowBroadSearchTooltip] = useState(false)
+        const inputRef = useRef<HTMLInputElement>(null)
+        const containerRef = useRef<HTMLDivElement>(null)
+
+        // Auto-focus input on mount (when transitioning from HomePage)
+        useEffect(() => {
+            if (inputRef.current) {
+                inputRef.current.focus()
+            }
+        }, [])
+
+        // Expose both container ref and focus method
+        useImperativeHandle(ref, () => ({
+            ...containerRef.current!,
+            focusInput: () => {
+                inputRef.current?.focus()
+            }
+        } as HTMLDivElement & { focusInput: () => void }))
 
         const filteredDepartments = departments.filter((dept) =>
             dept.toLowerCase().includes(deptSearch.toLowerCase())
@@ -56,7 +73,7 @@ export const CourseSearch = forwardRef<HTMLDivElement, CourseSearchProps>(
 
         return (
             <div
-                ref={ref}
+                ref={containerRef}
                 className={`bg-white rounded-lg border border-gray-200 p-4 mb-4 transition-all duration-200 ${
                     isSearchSticky ? "fixed top-0 left-0 right-0 z-50 rounded-none border-b" : ""
                 }`}
@@ -71,10 +88,16 @@ export const CourseSearch = forwardRef<HTMLDivElement, CourseSearchProps>(
                         <div className="flex-1 min-w-[120px] relative">
                             <Search className={`absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 ${isSearching ? 'text-blue-500 animate-pulse' : 'text-gray-400'}`} />
                             <Input
+                                ref={inputRef}
+                                type="search"
                                 placeholder="Search topics, instructors, anything (try &quot;ECON 3&quot; or &quot;travel class&quot;)"
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                                 className={`pl-10 ${searchTerm ? 'pr-8' : 'pr-3'} font-serif w-full ${isSearching ? 'border-blue-300' : ''}`}
+                                autoComplete="off"
+                                data-form-type="other"
+                                data-lpignore="true"
+                                data-1p-ignore
                             />
                             {searchTerm && (
                                 <button
@@ -103,6 +126,10 @@ export const CourseSearch = forwardRef<HTMLDivElement, CourseSearchProps>(
                                                 className="h-8 text-sm pl-8"
                                                 onClick={(e) => e.stopPropagation()}
                                                 onKeyDown={(e) => e.stopPropagation()}
+                                                autoComplete="off"
+                                                data-form-type="other"
+                                                data-lpignore="true"
+                                                data-1p-ignore
                                             />
                                         </div>
                                     </div>
@@ -138,6 +165,10 @@ export const CourseSearch = forwardRef<HTMLDivElement, CourseSearchProps>(
                                                 className="h-8 text-sm pl-8"
                                                 onClick={(e) => e.stopPropagation()}
                                                 onKeyDown={(e) => e.stopPropagation()}
+                                                autoComplete="off"
+                                                data-form-type="other"
+                                                data-lpignore="true"
+                                                data-1p-ignore
                                             />
                                         </div>
                                     </div>

@@ -183,28 +183,26 @@ export default function Courses() {
         }
     }
 
-    // Trigger search when search term, department, school, or broad search changes
-    useEffect(() => {
-        handleSearch(debouncedSearchTerm, selectedDepartment, selectedSchool)
-    }, [debouncedSearchTerm, selectedDepartment, selectedSchool, broadSearch])
-
-    // // Handle local sorting when only sortField or sortDirection changes
-    // useEffect(() => {
-    //     if (searchResults.length > 0) {
-    //         const sortedResults = sortSearchResults(searchResults, sortField, sortDirection)
-    //         setSearchResults(sortedResults)
-    //     }
-    // }, [sortField, sortDirection])
-
+    // Trigger search when search term, department, school, or broad search changes (only after initial search)
     useEffect(() => {
         if (hasSearched) {
-            handleSearch(searchTerm, selectedDepartment, selectedSchool)
+            handleSearch(debouncedSearchTerm, selectedDepartment, selectedSchool)
         }
-    }, [searchTerm, selectedDepartment, selectedSchool, broadSearch, hasSearched])
+    }, [debouncedSearchTerm, selectedDepartment, selectedSchool, broadSearch, hasSearched])
 
     const handleInitialSearch = () => {
         setHasSearched(true)
     }
+
+    // Ensure input stays focused after transitioning from HomePage
+    useEffect(() => {
+        if (hasSearched && searchBarRef.current && 'focusInput' in searchBarRef.current) {
+            // Small delay to ensure DOM is ready
+            setTimeout(() => {
+                (searchBarRef.current as any).focusInput?.()
+            }, 0)
+        }
+    }, [hasSearched])
 
     if (!hasSearched) {
         return (
