@@ -202,6 +202,11 @@ export default function Courses() {
         setHasSearched(true)
     }
 
+    const handleReturnHome = () => {
+        setHasSearched(false)
+        setSearchTerm('')
+    }
+
     // Ensure input stays focused after transitioning from HomePage
     useEffect(() => {
         if (hasSearched && searchBarRef.current && 'focusInput' in searchBarRef.current) {
@@ -235,7 +240,12 @@ export default function Courses() {
     return (
         <div className="container mx-auto px-4 py-6">
             <div className="text-center mb-6">
-                <h1 className="font-sans text-6xl font-bold text-blue-600 mb-2">Classdore</h1>
+                <h1
+                    className="font-sans text-6xl font-bold text-blue-600 mb-2 cursor-pointer hover:text-blue-700 transition-colors"
+                    onClick={handleReturnHome}
+                >
+                    Classdore
+                </h1>
                 <p className="font-serif text-gray-600 max-w-2xl mx-auto">
                     Fast, relevant class search. Course listings updated daily.
                 </p>
@@ -257,6 +267,7 @@ export default function Courses() {
                 isSearching={isSearching}
                 broadSearch={broadSearch}
                 setBroadSearch={setBroadSearch}
+                onReturnHome={handleReturnHome}
             />
 
             {isSearchSticky && <div className="h-[120px] mb-4" />}

@@ -20,6 +20,7 @@ interface CourseSearchProps {
     isSearching?: boolean
     broadSearch: boolean
     setBroadSearch: (value: boolean) => void
+    onReturnHome: () => void
 }
 
 export const CourseSearch = forwardRef<HTMLDivElement, CourseSearchProps>(
@@ -39,6 +40,7 @@ export const CourseSearch = forwardRef<HTMLDivElement, CourseSearchProps>(
             isSearching = false,
             broadSearch,
             setBroadSearch,
+            onReturnHome,
         },
         ref
     ) => {
@@ -82,7 +84,12 @@ export const CourseSearch = forwardRef<HTMLDivElement, CourseSearchProps>(
                     <div className="flex flex-row gap-2 items-center w-full">
                         {isSearchSticky && (
                             <div className="flex-shrink-0">
-                                <h2 className="font-sans text-xl font-bold text-blue-600">Classdore</h2>
+                                <h2
+                                    className="font-sans text-xl font-bold text-blue-600 cursor-pointer hover:text-blue-700 transition-colors"
+                                    onClick={onReturnHome}
+                                >
+                                    Classdore
+                                </h2>
                             </div>
                         )}
                         <div className="flex-1 min-w-[120px] relative">
