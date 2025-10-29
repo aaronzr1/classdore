@@ -9,16 +9,17 @@ import { CourseSearch } from "./course-search"
 import { ViewportCourseTable } from "./viewport-course-table"
 import { CourseDetailDialog } from "./course-detail-dialog"
 import { EmptyState } from "./empty-state"
+import { HomePage } from "./home-page"
 
 // const handleSearch = async (query: string) => {
 
 //     try {
-        
+
 //         if (!query.trim()) {
 //             setSearchResults([])
 //             return
 //         }
-        
+
 //         query = sanitizeQuery(query) // setting some defaults
 //         if (!query.trim()) {
 //             console.log("Single character query, populating all courses")
@@ -57,6 +58,8 @@ export default function Courses() {
     const [sortDirection, setSortDirection] = useState<SortDirection>("asc")
     const [selectedCourse, setSelectedCourse] = useState<Course | null>(null)
 
+    const [hasSearched, setHasSearched] = useState(false)
+
     // const [allCourses, setAllCourses] = useState<Course[]>([])
     const [allDepartments, setAllDepartments] = useState<string[]>([])
     const [allSchools, setAllSchools] = useState<string[]>([])
@@ -90,7 +93,7 @@ export default function Courses() {
 
         fetchData()
     }, [])
-    
+
 
     // Local sorting function for existing searchResults
     const sortSearchResults = (results: Course[], field: SortField, direction: SortDirection): Course[] => {
@@ -185,13 +188,43 @@ export default function Courses() {
         handleSearch(debouncedSearchTerm, selectedDepartment, selectedSchool)
     }, [debouncedSearchTerm, selectedDepartment, selectedSchool, broadSearch])
 
-    // Handle local sorting when only sortField or sortDirection changes
+    // // Handle local sorting when only sortField or sortDirection changes
+    // useEffect(() => {
+    //     if (searchResults.length > 0) {
+    //         const sortedResults = sortSearchResults(searchResults, sortField, sortDirection)
+    //         setSearchResults(sortedResults)
+    //     }
+    // }, [sortField, sortDirection])
+
     useEffect(() => {
-        if (searchResults.length > 0) {
-            const sortedResults = sortSearchResults(searchResults, sortField, sortDirection)
-            setSearchResults(sortedResults)
+        if (hasSearched) {
+            handleSearch(searchTerm, selectedDepartment, selectedSchool)
         }
-    }, [sortField, sortDirection])
+    }, [searchTerm, selectedDepartment, selectedSchool, broadSearch, hasSearched])
+
+    const handleInitialSearch = () => {
+        setHasSearched(true)
+    }
+
+    if (!hasSearched) {
+        return (
+            <>
+                <HomePage
+                    searchTerm={searchTerm}
+                    setSearchTerm={setSearchTerm}
+                    selectedDepartment={selectedDepartment}
+                    setSelectedDepartment={setSelectedDepartment}
+                    selectedSchool={selectedSchool}
+                    setSelectedSchool={setSelectedSchool}
+                    departments={allDepartments}
+                    schools={allSchools}
+                    onSearch={handleInitialSearch}
+                />
+
+                <CourseDetailDialog course={selectedCourse} onClose={() => setSelectedCourse(null)} />
+            </>
+        )
+    }
 
     return (
         <div className="container mx-auto px-4 py-6">
