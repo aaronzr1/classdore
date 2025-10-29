@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, useCallback } from "react"
 import { Course, SortField, SortDirection } from "@/lib/types"
 // import { filterAndSortCourses, initFuse } from "@/lib/search-utils"
 import { useSticky } from "@/lib/use-sticky"
@@ -69,7 +69,7 @@ export default function Courses() {
 
     // debouncing: immediate on first keystroke, then wait 300ms
     const debouncedSearchTerm = useDebounce(searchTerm, 150)
-    const [isSearching, setIsSearching] = useState(false)
+    const [isSearching] = useState(false)
 
     const { isSearchSticky, isTableHeaderSticky, searchBarRef, tableHeaderRef } = useSticky()
 
@@ -198,21 +198,22 @@ export default function Courses() {
         }
     }, [sortField, sortDirection])
 
-    const handleInitialSearch = () => {
+    const handleInitialSearch = useCallback(() => {
         setHasSearched(true)
-    }
+    }, [])
 
-    const handleReturnHome = () => {
+    const handleReturnHome = useCallback(() => {
         setHasSearched(false)
         setSearchTerm('')
-    }
+    }, [])
 
     // Ensure input stays focused after transitioning from HomePage
     useEffect(() => {
         if (hasSearched && searchBarRef.current && 'focusInput' in searchBarRef.current) {
             // Small delay to ensure DOM is ready
             setTimeout(() => {
-                (searchBarRef.current as any).focusInput?.()
+                const ref = searchBarRef.current as HTMLDivElement & { focusInput?: () => void }
+                ref.focusInput?.()
             }, 0)
         }
     }, [hasSearched])

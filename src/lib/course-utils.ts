@@ -1,4 +1,4 @@
-import { Course, SortField, SortDirection } from "./types"
+import { Course } from "./types"
 
 // 🔄 LEGACY SEARCH FUNCTION - COMMENTED OUT FOR FUTURE REFERENCE
 // This was used for Redis-based search. To revert back to Redis search:

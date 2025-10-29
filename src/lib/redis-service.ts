@@ -1,4 +1,4 @@
-import { createClient, RedisClientType } from "redis";
+import { createClient } from "redis";
 import { Course, CourseSearchRequest, CourseSearchResponse, CourseTableItem, SortField, SortDirection } from "@/lib/types";
 import dotenv from "dotenv";
 import pako from "pako"; // For zlib/gzip decompression

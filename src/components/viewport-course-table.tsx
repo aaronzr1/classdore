@@ -203,7 +203,6 @@ export const ViewportCourseTable = forwardRef<HTMLDivElement, ViewportCourseTabl
     ) => {
         const [visibleIndices, setVisibleIndices] = useState<Set<number>>(new Set())
         const containerRef = useRef<HTMLDivElement>(null)
-        const observerRef = useRef<IntersectionObserver | null>(null)
 
         // Row height for calculations
         const rowHeight = 120
@@ -223,7 +222,6 @@ export const ViewportCourseTable = forwardRef<HTMLDivElement, ViewportCourseTabl
 
             // Simple approach: calculate based on how much of the container is visible
             const containerTop = containerRect.top
-            const containerBottom = containerRect.bottom
 
             // Calculate which rows are visible based on the visible portion of the container
             const visibleStart = Math.max(0, -containerTop)

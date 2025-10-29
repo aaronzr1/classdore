@@ -2,10 +2,10 @@
 
 import type React from "react"
 
-import { forwardRef, useEffect, useRef, useState } from "react"
+import { forwardRef, useEffect, useRef, useState, memo } from "react"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Search, Filter, Sparkles, Zap, Globe } from "lucide-react"
+import { Search, Filter } from "lucide-react"
 
 interface HomePageProps {
   searchTerm: string
@@ -19,7 +19,7 @@ interface HomePageProps {
   onSearch: () => void
 }
 
-export const HomePage = forwardRef<HTMLDivElement, HomePageProps>(
+const HomePageComponent = forwardRef<HTMLDivElement, HomePageProps>(
   (
     {
       searchTerm,
@@ -58,11 +58,11 @@ export const HomePage = forwardRef<HTMLDivElement, HomePageProps>(
       <div ref={ref} className="min-h-screen flex flex-col items-center justify-center px-4 py-8 animate-in fade-in duration-700">
         <div className="w-full max-w-3xl flex flex-col items-center space-y-8">
           {/* Logo */}
-          <div className="text-center animate-in slide-in-from-top duration-500">
-            <h1 className="font-sans text-8xl font-bold bg-gradient-to-r from-blue-600 to-blue-500 bg-clip-text text-transparent mb-3 tracking-tight">
+          <div className="w-full text-center animate-in slide-in-from-top duration-500 px-4">
+            <h1 className="font-sans text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold bg-gradient-to-r from-blue-600 to-blue-500 bg-clip-text text-transparent mb-3 tracking-tight">
               Classdore
             </h1>
-            <p className="text-sm text-gray-500 tracking-wide">Fast, relevant class search. Course listings updated daily.</p>
+            <p className="text-xs sm:text-sm text-gray-500 tracking-wide max-w-2xl mx-auto">Fast, relevant class search. Course listings updated daily.</p>
           </div>
 
           {/* Search Section */}
@@ -175,25 +175,25 @@ export const HomePage = forwardRef<HTMLDivElement, HomePageProps>(
           </div>
 
           {/* Welcome Section */}
-          <div className="w-full max-w-2xl animate-in fade-in duration-700 delay-200">
+          <div className="w-full max-w-2xl animate-in fade-in duration-700 delay-200 [animation-fill-mode:both]">
             <div className="bg-gradient-to-br from-blue-50 to-white rounded-2xl p-8 border border-blue-100 shadow-sm">
               <h2 className="text-base font-semibold text-gray-900 mb-4">
                 Welcome to Classdore!
               </h2>
               <p className="text-sm text-gray-700 mb-5 leading-relaxed">
-                What you see here is an <em className="font-medium">ongoing effort</em> to make finding classes easier. It's still a work in progress, but a few tips to get started:
+                What you see here is an <em className="font-medium">ongoing effort</em> to make finding classes easier. It&apos;s still a work in progress, but a few tips to get started:
               </p>
               <div className="space-y-3">
                 <div className="flex items-start gap-3">
                   <span className="text-blue-500 font-bold text-lg leading-none mt-0.5">•</span>
                   <p className="text-sm text-gray-600 leading-relaxed">
-                    As of now, the primary focus is <b>class search</b>, not registration. That means stuff like the "class availability" field will be updated reasonably, but not necessarily instantly.
+                    As of now, the primary focus is <b>class search</b>, not registration. That means stuff like the &quot;class availability&quot; field will be updated reasonably, but not necessarily instantly.
                   </p>
                 </div>
                 <div className="flex items-start gap-3">
                   <span className="text-blue-500 font-bold text-lg leading-none mt-0.5">•</span>
                   <p className="text-sm text-gray-600 leading-relaxed">
-                    While this website exists separate from YES, it can link to YES. Clicking "+" or "Add to cart" will save listings and open your cart in a new tab. Note this requires for you to have logged into YES somewhat recently.
+                    While this website exists separate from YES, it can link to YES. Clicking &quot;+&quot; or &quot;Add to cart&quot; will save listings and open your cart in a new tab. Note this requires for you to have logged into YES somewhat recently.
                   </p>
                 </div>
                 <div className="flex items-start gap-3">
@@ -216,4 +216,6 @@ export const HomePage = forwardRef<HTMLDivElement, HomePageProps>(
   },
 )
 
-HomePage.displayName = "HomePage"
+HomePageComponent.displayName = "HomePage"
+
+export const HomePage = memo(HomePageComponent)
