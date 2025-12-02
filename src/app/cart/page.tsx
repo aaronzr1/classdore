@@ -1,17 +1,22 @@
 "use client"
 
-import { useMemo } from "react"
+import { useMemo, useState } from "react"
 import { useCart } from "@/hooks/useCart"
 import { CartItemCard } from "@/components/cart-item-card"
 import { CartEmptyState } from "@/components/cart-empty-state"
+import { ScheduleBuilderDialog } from "@/components/schedule-builder-dialog"
 import { Button } from "@/components/ui/button"
-import { Trash2, ArrowLeft, AlertTriangle } from "lucide-react"
+import { Trash2, ArrowLeft, AlertTriangle, Calendar } from "lucide-react"
 import Link from "next/link"
 import { toast } from "sonner"
 import { findConflicts } from "@/lib/time-utils"
+import { solveScheduleOptimized } from "@/lib/schedule-solver"
+import type { ScheduleSolution } from "@/lib/schedule-solver"
 
 export default function CartPage() {
   const { cartItems, cartCount, totalCredits, removeFromCart, clearCart } = useCart()
+  const [scheduleSolution, setScheduleSolution] = useState<ScheduleSolution | null>(null)
+  const [showScheduleDialog, setShowScheduleDialog] = useState(false)
 
   // Detect schedule conflicts
   const conflicts = useMemo(() => {
@@ -54,6 +59,34 @@ export default function CartPage() {
     }
   }
 
+  const handleGenerateSchedule = () => {
+    if (cartCount === 0) return
+
+    toast.info("Generating schedule...")
+
+    // Solve the scheduling problem
+    const courses = cartItems.map((item) => item.course)
+    const solution = solveScheduleOptimized(courses, 10)
+
+    setScheduleSolution(solution)
+    setShowScheduleDialog(true)
+
+    if (solution.scheduledCourses.length === courses.length) {
+      toast.success("Perfect schedule found with no conflicts!")
+    } else if (solution.scheduledCourses.length > 0) {
+      toast.warning(
+        `Scheduled ${solution.scheduledCourses.length} of ${courses.length} courses`,
+        {
+          description: `${solution.unschedulableCourses.length} course${solution.unschedulableCourses.length > 1 ? "s" : ""} couldn't be scheduled due to conflicts.`,
+        }
+      )
+    } else {
+      toast.error("Couldn't create a valid schedule", {
+        description: "All courses have conflicting times.",
+      })
+    }
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
@@ -88,9 +121,13 @@ export default function CartPage() {
                   <Trash2 className="w-4 h-4 mr-2" />
                   Clear All
                 </Button>
-                <Button size="sm" disabled className="bg-gray-400 cursor-not-allowed">
+                <Button
+                  size="sm"
+                  onClick={handleGenerateSchedule}
+                  className="bg-blue-600 hover:bg-blue-700"
+                >
+                  <Calendar className="w-4 h-4 mr-2" />
                   Generate Schedule
-                  <span className="ml-2 text-xs opacity-75">(Coming Soon)</span>
                 </Button>
               </div>
             )}
@@ -158,6 +195,13 @@ export default function CartPage() {
           </div>
         )}
       </div>
+
+      {/* Schedule Builder Dialog */}
+      <ScheduleBuilderDialog
+        isOpen={showScheduleDialog}
+        onClose={() => setShowScheduleDialog(false)}
+        solution={scheduleSolution}
+      />
     </div>
   )
 }

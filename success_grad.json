@@ -1,0 +1,448 @@
+{
+    "enrollmentMessages": [
+        {
+            "classSectionSummary": {
+                "addable": false,
+                "allFacultyInstructors": [
+                    {
+                        "appointedFaculty": true,
+                        "displayName": "Biswas, Gautam",
+                        "emplid": "000019109",
+                        "firstName": "Gautam",
+                        "fullName": "Biswas,Gautam",
+                        "lastName": "Biswas",
+                        "middleName": "",
+                        "primaryInstructor": true,
+                        "printable": true,
+                        "role": {
+                            "code": "PI",
+                            "longDescription": "Primary Instructor",
+                            "shortDescription": "Prim Instr"
+                        },
+                        "sequence": 1
+                    }
+                ],
+                "allInstructionalStaff": [],
+                "allInstructors": [
+                    {
+                        "appointedFaculty": true,
+                        "displayName": "Biswas, Gautam",
+                        "emplid": "000019109",
+                        "firstName": "Gautam",
+                        "fullName": "Biswas,Gautam",
+                        "lastName": "Biswas",
+                        "middleName": "",
+                        "primaryInstructor": true,
+                        "printable": true,
+                        "role": {
+                            "code": "PI",
+                            "longDescription": "Primary Instructor",
+                            "shortDescription": "Prim Instr"
+                        },
+                        "sequence": 1
+                    }
+                ],
+                "associationNumber": 1,
+                "availabilityStatus": {
+                    "code": "A",
+                    "longDescription": "Active",
+                    "shortDescription": "Active"
+                },
+                "availableSeats": 16,
+                "availableWaitlist": 10,
+                "availibleGradingBasis": [
+                    {
+                        "code": "N",
+                        "longDescription": "Normal Grading Rules",
+                        "shortDescription": "Normal"
+                    },
+                    {
+                        "code": "PF",
+                        "longDescription": "Pass or Fail Only",
+                        "shortDescription": "Pass/Fail"
+                    },
+                    {
+                        "code": "A",
+                        "longDescription": "For Audit Only",
+                        "shortDescription": "Audit"
+                    }
+                ],
+                "cancelled": false,
+                "career": {
+                    "code": "GRAD",
+                    "longDescription": "Graduate",
+                    "shortDescription": "Graduate"
+                },
+                "catalogNumber": "6360",
+                "classKey": {
+                    "catalogNumber": "6360",
+                    "school": "EngrSchool",
+                    "section": "01",
+                    "session": "Regular",
+                    "subjectArea": "CS",
+                    "term": "Spring",
+                    "year": "2026"
+                },
+                "classNumber": 9677,
+                "classRollStatus": null,
+                "closed": false,
+                "component": {
+                    "code": "LEC",
+                    "longDescription": "Lecture",
+                    "shortDescription": "Lecture"
+                },
+                "courseKey": {
+                    "id": "107455",
+                    "offerNumber": 1
+                },
+                "displayStatus": {
+                    "code": "O",
+                    "longDescription": "Open",
+                    "shortDescription": "Open"
+                },
+                "displayString": "Advanced Artificial Intelligence",
+                "enrolled": true,
+                "enrollmentStatus": {
+                    "code": "O",
+                    "longDescription": "Open",
+                    "shortDescription": "Open"
+                },
+                "enrollmentStatusOpen": true,
+                "finalGradeStatus": null,
+                "gradedComponent": true,
+                "gradingAccess": null,
+                "hasPublicFaculty": true,
+                "hasPublicInstructionalStaff": false,
+                "hasRequiredComponents": false,
+                "hasSeats": true,
+                "hasSyllabus": false,
+                "hasWaitListSeats": true,
+                "inCart": true,
+                "meetingPatterns": [
+                    {
+                        "days": {
+                            "dayNumbers": [
+                                2,
+                                4
+                            ],
+                            "onFriday": false,
+                            "onMonday": false,
+                            "onSaturday": false,
+                            "onSunday": false,
+                            "onThursday": true,
+                            "onTuesday": true,
+                            "onWednesday": false
+                        },
+                        "daysDisplayString": "TR",
+                        "endDate": "2026-04-20T00:00:00",
+                        "endDateString": "2026-04-20",
+                        "instructors": [
+                            {
+                                "appointedFaculty": true,
+                                "displayName": "Biswas, Gautam",
+                                "emplid": "000019109",
+                                "firstName": "Gautam",
+                                "fullName": "Biswas,Gautam",
+                                "lastName": "Biswas",
+                                "middleName": "",
+                                "primaryInstructor": true,
+                                "printable": true,
+                                "role": {
+                                    "code": "PI",
+                                    "longDescription": "Primary Instructor",
+                                    "shortDescription": "Prim Instr"
+                                },
+                                "sequence": 1
+                            }
+                        ],
+                        "location": {
+                            "building": {
+                                "code": "FGJH",
+                                "latitude": "36.144785",
+                                "longDescription": "Featheringill Hall",
+                                "longitude": "-86.803105",
+                                "mapCode": null,
+                                "shortDescription": "FGJH",
+                                "validCoordinates": true
+                            },
+                            "displayString": "Featheringill Hall 203",
+                            "facility": {
+                                "code": "FGJH 203",
+                                "longDescription": "Featheringill Hall 203",
+                                "shortDescription": "FGJH 203"
+                            },
+                            "room": "203"
+                        },
+                        "locationDisplayString": "Featheringill Hall 203",
+                        "number": "1",
+                        "publicFaculty": [
+                            {
+                                "appointedFaculty": true,
+                                "displayName": "Biswas, Gautam",
+                                "emplid": "000019109",
+                                "firstName": "Gautam",
+                                "fullName": "Biswas,Gautam",
+                                "lastName": "Biswas",
+                                "middleName": "",
+                                "primaryInstructor": true,
+                                "printable": true,
+                                "role": {
+                                    "code": "PI",
+                                    "longDescription": "Primary Instructor",
+                                    "shortDescription": "Prim Instr"
+                                },
+                                "sequence": 1
+                            }
+                        ],
+                        "publicInstructionalStaff": [],
+                        "publicInstructors": [
+                            {
+                                "appointedFaculty": true,
+                                "displayName": "Biswas, Gautam",
+                                "emplid": "000019109",
+                                "firstName": "Gautam",
+                                "fullName": "Biswas,Gautam",
+                                "lastName": "Biswas",
+                                "middleName": "",
+                                "primaryInstructor": true,
+                                "printable": true,
+                                "role": {
+                                    "code": "PI",
+                                    "longDescription": "Primary Instructor",
+                                    "shortDescription": "Prim Instr"
+                                },
+                                "sequence": 1
+                            }
+                        ],
+                        "random": false,
+                        "randomDatesDisplayString": "01/05/2026 - 04/20/2026",
+                        "startDate": "2026-01-05T00:00:00",
+                        "startDateString": "2026-01-05",
+                        "time": {
+                            "endTime": null,
+                            "endTimeFormatted": null,
+                            "formattedTimeRange": "TBA",
+                            "startTime": null,
+                            "startTimeFormatted": null
+                        },
+                        "timeDisplayString": "TBA",
+                        "topic": null,
+                        "validCoordinates": true
+                    }
+                ],
+                "midtermDeficiencyStatus": null,
+                "modeOfInstruction": "P",
+                "newClass": false,
+                "notes": [],
+                "numberEnrolled": 14,
+                "numberWaitListed": 0,
+                "onWaitList": false,
+                "onlineType": false,
+                "open": true,
+                "primaryComponent": true,
+                "publicInstructors": [
+                    {
+                        "appointedFaculty": true,
+                        "displayName": "Biswas, Gautam",
+                        "emplid": "000019109",
+                        "firstName": "Gautam",
+                        "fullName": "Biswas,Gautam",
+                        "lastName": "Biswas",
+                        "middleName": "",
+                        "primaryInstructor": true,
+                        "printable": true,
+                        "role": {
+                            "code": "PI",
+                            "longDescription": "Primary Instructor",
+                            "shortDescription": "Prim Instr"
+                        },
+                        "sequence": 1
+                    }
+                ],
+                "randomMeetingPatterns": [],
+                "recurringMeetingPatterns": [
+                    {
+                        "days": {
+                            "dayNumbers": [
+                                2,
+                                4
+                            ],
+                            "onFriday": false,
+                            "onMonday": false,
+                            "onSaturday": false,
+                            "onSunday": false,
+                            "onThursday": true,
+                            "onTuesday": true,
+                            "onWednesday": false
+                        },
+                        "daysDisplayString": "TR",
+                        "endDate": "2026-04-20T00:00:00",
+                        "endDateString": "2026-04-20",
+                        "instructors": [
+                            {
+                                "appointedFaculty": true,
+                                "displayName": "Biswas, Gautam",
+                                "emplid": "000019109",
+                                "firstName": "Gautam",
+                                "fullName": "Biswas,Gautam",
+                                "lastName": "Biswas",
+                                "middleName": "",
+                                "primaryInstructor": true,
+                                "printable": true,
+                                "role": {
+                                    "code": "PI",
+                                    "longDescription": "Primary Instructor",
+                                    "shortDescription": "Prim Instr"
+                                },
+                                "sequence": 1
+                            }
+                        ],
+                        "location": {
+                            "building": {
+                                "code": "FGJH",
+                                "latitude": "36.144785",
+                                "longDescription": "Featheringill Hall",
+                                "longitude": "-86.803105",
+                                "mapCode": null,
+                                "shortDescription": "FGJH",
+                                "validCoordinates": true
+                            },
+                            "displayString": "Featheringill Hall 203",
+                            "facility": {
+                                "code": "FGJH 203",
+                                "longDescription": "Featheringill Hall 203",
+                                "shortDescription": "FGJH 203"
+                            },
+                            "room": "203"
+                        },
+                        "locationDisplayString": "Featheringill Hall 203",
+                        "number": "1",
+                        "publicFaculty": [
+                            {
+                                "appointedFaculty": true,
+                                "displayName": "Biswas, Gautam",
+                                "emplid": "000019109",
+                                "firstName": "Gautam",
+                                "fullName": "Biswas,Gautam",
+                                "lastName": "Biswas",
+                                "middleName": "",
+                                "primaryInstructor": true,
+                                "printable": true,
+                                "role": {
+                                    "code": "PI",
+                                    "longDescription": "Primary Instructor",
+                                    "shortDescription": "Prim Instr"
+                                },
+                                "sequence": 1
+                            }
+                        ],
+                        "publicInstructionalStaff": [],
+                        "publicInstructors": [
+                            {
+                                "appointedFaculty": true,
+                                "displayName": "Biswas, Gautam",
+                                "emplid": "000019109",
+                                "firstName": "Gautam",
+                                "fullName": "Biswas,Gautam",
+                                "lastName": "Biswas",
+                                "middleName": "",
+                                "primaryInstructor": true,
+                                "printable": true,
+                                "role": {
+                                    "code": "PI",
+                                    "longDescription": "Primary Instructor",
+                                    "shortDescription": "Prim Instr"
+                                },
+                                "sequence": 1
+                            }
+                        ],
+                        "random": false,
+                        "randomDatesDisplayString": "01/05/2026 - 04/20/2026",
+                        "startDate": "2026-01-05T00:00:00",
+                        "startDateString": "2026-01-05",
+                        "time": {
+                            "endTime": null,
+                            "endTimeFormatted": null,
+                            "formattedTimeRange": "TBA",
+                            "startTime": null,
+                            "startTimeFormatted": null
+                        },
+                        "timeDisplayString": "TBA",
+                        "topic": null,
+                        "validCoordinates": true
+                    }
+                ],
+                "school": {
+                    "code": "ENGIN",
+                    "longDescription": "School of Engineering",
+                    "shortDescription": "EngrSchool"
+                },
+                "section": "01",
+                "shortDisplayString": "CS-6360-01",
+                "srsClassId": null,
+                "srsSubject": {
+                    "code": "368",
+                    "longDescription": "COMPUTER SCIENCE",
+                    "shortDescription": "CS"
+                },
+                "subject": {
+                    "code": "CS",
+                    "longDescription": "Computer Science",
+                    "shortDescription": "CS"
+                },
+                "syllabusMetaData": null,
+                "term": {
+                    "code": "1060",
+                    "longDescription": "2026 Spring",
+                    "shortDescription": "2026S"
+                },
+                "termSession": {
+                    "code": "1",
+                    "datesDisplayString": "01/05/2026 - 04/20/2026",
+                    "end": "2026-04-20T00:00:00",
+                    "endString": "2026-04-20",
+                    "longDescription": "Regular Academic Session",
+                    "shortDescription": "Regular",
+                    "start": "2026-01-05T00:00:00",
+                    "startString": "2026-01-05"
+                },
+                "title": "Advanced Artificial Intelligence",
+                "topic": null,
+                "totalSeats": 30,
+                "unitRange": {
+                    "displayString": "3.0",
+                    "hasMinOrMax": true,
+                    "max": 3,
+                    "min": 3,
+                    "minEqualsMax": true,
+                    "wholeNumbers": [
+                        3
+                    ]
+                },
+                "waitListCapacity": 10,
+                "waitlisted": false
+            },
+            "detailedMessage": "CS-6360-01: Successfully enrolled in CS-6360-01",
+            "message": "Successfully enrolled in CS-6360-01",
+            "messageType": {
+                "code": "I",
+                "description": "Informational"
+            },
+            "number": 0
+        }
+    ],
+    "jobStatus": {
+        "averageResponseTime": 0,
+        "batchStatuses": [],
+        "createdBy": "000921879",
+        "dateCreated": "2025-10-30T00:37:26",
+        "dateUpdated": "2025-10-30T00:37:28",
+        "errorMessage": null,
+        "id": "8492e389-b552-11f0-8429-83f1abe08a01",
+        "jobType": "QueueEnrollInClassSectionsRequest",
+        "millisSinceStart": 187398,
+        "secondsSinceStart": 187.398,
+        "status": "C",
+        "updatedBy": null
+    }
+}

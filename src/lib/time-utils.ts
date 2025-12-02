@@ -103,6 +103,7 @@ export function parseMeetingTimes(course: Course): TimeSlot[] {
 
     // Expand meeting days into individual days
     // meeting_days can be ["MWF"], ["TR"], or ["M", "W", "F"]
+    // Day abbreviations: M=Monday, T=Tuesday, W=Wednesday, R=Thursday, F=Friday, S=Saturday
     const days: string[] = []
 
     for (const dayGroup of course.meeting_days) {
@@ -111,19 +112,12 @@ export function parseMeetingTimes(course: Course): TimeSlot[] {
         days.push(dayGroup)
       } else {
         // Otherwise, split compound days like "MWF" or "TR"
-        // Common patterns: M, T, W, Th, F, S, Su
+        // Common patterns: M, T, W, R (Thursday), F, S
         let remaining = dayGroup
         while (remaining.length > 0) {
-          if (remaining.startsWith("Th") || remaining.startsWith("TH")) {
-            days.push("Th")
-            remaining = remaining.slice(2)
-          } else if (remaining.startsWith("Su") || remaining.startsWith("SU")) {
-            days.push("Su")
-            remaining = remaining.slice(2)
-          } else {
-            days.push(remaining[0])
-            remaining = remaining.slice(1)
-          }
+          // Note: R = Thursday (not Th)
+          days.push(remaining[0])
+          remaining = remaining.slice(1)
         }
       }
     }

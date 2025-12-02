@@ -1,0 +1,58 @@
+{
+    "enrollmentMessages": [
+        {
+            "classSectionSummary": {
+                "catalogNumber": "3281",
+                "classNumber": 9802,
+                "courseKey": {
+                    "id": "107422",
+                    "offerNumber": 1
+                },
+                "section": "01",
+                "shortDisplayString": "CS-3281-01",
+                "subject": {
+                    "code": "CS",
+                    "longDescription": "Computer Science",
+                    "shortDescription": "CS"
+                },
+                "term": {
+                    "code": "1060",
+                    "longDescription": "2026 Spring",
+                    "shortDescription": "2026S"
+                },
+                "termSession": {
+                    "code": "1",
+                    "datesDisplayString": "01/05/2026 - 04/20/2026",
+                    "end": "2026-04-20T00:00:00",
+                    "endString": "2026-04-20",
+                    "longDescription": "Regular Academic Session",
+                    "shortDescription": "Regular",
+                    "start": "2026-01-05T00:00:00",
+                    "startString": "2026-01-05"
+                },
+                "title": "Principles of Operating Systems I"
+            },
+            "detailedMessage": "CS-3281-01: No Valid Appointment Found And Open Enrollment Period Has Not Begun. (14640,79)",
+            "message": "No Valid Appointment Found And Open Enrollment Period Has Not Begun. (14640,79)",
+            "messageType": {
+                "code": "E",
+                "description": "Error"
+            },
+            "number": 79
+        }
+    ],
+    "jobStatus": {
+        "averageResponseTime": 0,
+        "batchStatuses": [],
+        "createdBy": "000921879",
+        "dateCreated": "2025-10-30T00:31:41",
+        "dateUpdated": "2025-10-30T00:31:44",
+        "errorMessage": null,
+        "id": "b6edc712-b551-11f0-8429-83f1abe08a01",
+        "jobType": "QueueEnrollInClassSectionsRequest",
+        "millisSinceStart": 542103,
+        "secondsSinceStart": 542.103,
+        "status": "C",
+        "updatedBy": null
+    }
+}
