@@ -3,6 +3,7 @@ import type { Metadata } from "next"
 import { Work_Sans, Open_Sans } from "next/font/google"
 import { Toaster } from "sonner"
 import { Analytics } from "@vercel/analytics/next"
+import { CartProvider } from "@/contexts/CartContext"
 import "./globals.css"
 
 const workSans = Work_Sans({
@@ -31,9 +32,11 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${workSans.variable} ${openSans.variable} antialiased`}>
       <body>
-        {children}
-        <Toaster position="bottom-right" richColors />
-        <Analytics />
+        <CartProvider>
+          {children}
+          <Toaster position="bottom-right" richColors />
+          <Analytics />
+        </CartProvider>
       </body>
     </html>
   )

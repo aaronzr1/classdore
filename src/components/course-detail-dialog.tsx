@@ -5,7 +5,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Calendar, MapPin, GraduationCap, Plus } from "lucide-react"
 import { Course } from "@/lib/types"
 import { Button } from "./ui/button"
-import { handleAddCourse as handleAddCourseUtil } from "@/lib/utils"
+import { useCart } from "@/hooks/useCart"
+import { showAddToCartToast } from "@/lib/utils"
 
 interface CourseDetailDialogProps {
     course: Course | null
@@ -13,13 +14,21 @@ interface CourseDetailDialogProps {
 }
 
 export function CourseDetailDialog({ course, onClose }: CourseDetailDialogProps) {
+    const { addToCart, removeFromCart } = useCart()
+
     if (!course) return null
 
     const enrollmentRatio = Math.min(1, Number.parseInt(course.enrolled) / Number.parseInt(course.capacity))
 
     const handleAddCourse = (e: React.MouseEvent) => {
         e.stopPropagation()
-        handleAddCourseUtil(course.id)
+        const success = addToCart(course)
+        if (success) {
+            showAddToCartToast(
+                `${course.course_dept} ${course.course_code} - ${course.course_title}`,
+                () => removeFromCart(course.id)
+            )
+        }
     }
 
     return (

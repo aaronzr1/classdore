@@ -59,9 +59,12 @@ export function sanitizeQuery(query: string): string {
 
 /**
  * Shows a success toast notification for course added to cart
- * with a dismiss button and link to view cart
+ * with a dismiss button, link to view cart, and undo option
+ *
+ * @param courseName The name of the course that was added
+ * @param onUndo Callback function to undo the add action
  */
-export function showAddToCartToast() {
+export function showAddToCartToast(courseName: string, onUndo: () => void) {
     const toastId = toast.success(
         <div className="relative min-w-[225px] max-w-fit">
             <button
@@ -74,37 +77,51 @@ export function showAddToCartToast() {
             >
                 <X className="w-3 h-3" />
             </button>
-            <div className="flex flex-col gap-1 pr-5">
+            <div className="flex flex-col gap-1.5 pr-5">
                 <div className="font-semibold">Course added to cart!</div>
-                <a
-                    href="https://more.app.vanderbilt.edu/more/SearchClasses.action"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-blue-600 hover:underline text-sm"
-                    onClick={(e) => e.stopPropagation()}
-                >
-                    View your cart in YES →
-                </a>
+                <div className="text-sm text-gray-600 line-clamp-1">{courseName}</div>
+                <div className="flex gap-2 text-sm">
+                    <a
+                        href="/cart"
+                        className="text-blue-600 hover:underline"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        View Cart →
+                    </a>
+                    <button
+                        onClick={(e) => {
+                            e.stopPropagation()
+                            onUndo()
+                            toast.dismiss(toastId)
+                            toast.info("Course removed from cart")
+                        }}
+                        className="text-gray-600 hover:underline"
+                    >
+                        Undo
+                    </button>
+                </div>
             </div>
         </div>,
         {
-            duration: 3000,
+            duration: 4000,
             className: '!w-auto !max-w-fit justify-center',
         }
     )
 }
 
 /**
- * Handles adding a course to the cart
+ * Handles adding a course directly to YES cart (Vanderbilt's registration system)
  * - Validates the course ID
  * - Opens the add course URL in a new window
- * - Redirects the new window to the cart page after a brief delay
- * - Shows a success toast notification
+ * - Redirects the new window to the YES cart page after a brief delay
+ *
+ * This function is preserved for future "Export to YES" functionality
+ * but is not currently used by the + button (which uses local cart instead)
  *
  * @param courseId The course ID to add
  * @returns true if the course was added successfully, false otherwise
  */
-export function handleAddCourse(courseId: string): boolean {
+export function handleAddCourseToYES(courseId: string): boolean {
     const classInfo = parseCourseId(courseId)
 
     if (!classInfo) {
@@ -122,9 +139,6 @@ export function handleAddCourse(courseId: string): boolean {
         if (addWindow && !addWindow.closed) {
             addWindow.location.href = 'https://more.app.vanderbilt.edu/more/SearchClasses.action'
         }
-
-        // Show success toast with link to cart
-        showAddToCartToast()
     }, 500)
 
     return true

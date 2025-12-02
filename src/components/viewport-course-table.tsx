@@ -5,7 +5,8 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { ChevronUp, ChevronDown, Clock, Users, Plus } from "lucide-react"
 import { Course, SortField, SortDirection } from "@/lib/types"
-import { handleAddCourse as handleAddCourseUtil } from "@/lib/utils"
+import { useCart } from "@/hooks/useCart"
+import { showAddToCartToast } from "@/lib/utils"
 
 interface ViewportCourseTableProps {
     courses: Course[]
@@ -53,10 +54,17 @@ interface ViewportCourseRowProps {
 
 function ViewportCourseRow({ course, index, onSelect, isVisible }: ViewportCourseRowProps) {
     const enrollmentRatio = Math.min(1, Number.parseInt(course.enrolled) / Number.parseInt(course.capacity))
+    const { addToCart, removeFromCart } = useCart()
 
     const handleAddCourse = (e: React.MouseEvent) => {
         e.stopPropagation()
-        handleAddCourseUtil(course.id)
+        const success = addToCart(course)
+        if (success) {
+            showAddToCartToast(
+                `${course.course_dept} ${course.course_code} - ${course.course_title}`,
+                () => removeFromCart(course.id)
+            )
+        }
     }
 
     // If not visible, render a placeholder with the same height

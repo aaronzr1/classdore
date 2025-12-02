@@ -3,7 +3,10 @@
 import { forwardRef, useState, useRef, useImperativeHandle, useEffect } from "react"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Search, Filter } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { Search, Filter, ShoppingCart } from "lucide-react"
+import { useCart } from "@/hooks/useCart"
+import Link from "next/link"
 
 interface CourseSearchProps {
     searchTerm: string
@@ -49,6 +52,7 @@ export const CourseSearch = forwardRef<HTMLDivElement, CourseSearchProps>(
         const [showBroadSearchTooltip, setShowBroadSearchTooltip] = useState(false)
         const inputRef = useRef<HTMLInputElement>(null)
         const containerRef = useRef<HTMLDivElement>(null)
+        const { cartCount } = useCart()
 
         // Auto-focus input on mount (when transitioning from HomePage)
         useEffect(() => {
@@ -185,6 +189,18 @@ export const CourseSearch = forwardRef<HTMLDivElement, CourseSearchProps>(
                                     </div>
                                 </SelectContent>
                             </Select>
+                        </div>
+                        <div className="flex-shrink-0">
+                            <Link href="/cart">
+                                <Button variant="outline" size="sm" className="relative h-10 px-3">
+                                    <ShoppingCart className="h-4 w-4" />
+                                    {cartCount > 0 && (
+                                        <span className="absolute -top-1 -right-1 bg-blue-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-semibold">
+                                            {cartCount > 9 ? "9+" : cartCount}
+                                        </span>
+                                    )}
+                                </Button>
+                            </Link>
                         </div>
                     </div>
                     <div className="mt-3 pt-3 border-t border-gray-100 flex items-center justify-between gap-4 flex-wrap">
