@@ -5,18 +5,28 @@ import { useCart } from "@/hooks/useCart"
 import { CartItemCard } from "@/components/cart-item-card"
 import { CartEmptyState } from "@/components/cart-empty-state"
 import { ScheduleBuilderDialog } from "@/components/schedule-builder-dialog"
+import { PreferenceDialog } from "@/components/preference-dialog"
 import { Button } from "@/components/ui/button"
 import { Trash2, ArrowLeft, AlertTriangle, Calendar } from "lucide-react"
 import Link from "next/link"
 import { toast } from "sonner"
 import { findConflicts } from "@/lib/time-utils"
-import { solveScheduleOptimized } from "@/lib/schedule-solver"
+import { interactiveSchedule, getSchedulingStats } from "@/lib/interactive-scheduler"
 import type { ScheduleSolution } from "@/lib/schedule-solver"
+import type { PairwiseComparison } from "@/lib/interactive-scheduler"
+import type { Course } from "@/lib/types"
 
 export default function CartPage() {
   const { cartItems, cartCount, totalCredits, removeFromCart, clearCart } = useCart()
   const [scheduleSolution, setScheduleSolution] = useState<ScheduleSolution | null>(null)
   const [showScheduleDialog, setShowScheduleDialog] = useState(false)
+
+  // Interactive scheduling state
+  const [currentQuestion, setCurrentQuestion] = useState<PairwiseComparison | null>(null)
+  const [questionNumber, setQuestionNumber] = useState(0)
+  const [totalQuestions, setTotalQuestions] = useState(0)
+  const [showPreferenceDialog, setShowPreferenceDialog] = useState(false)
+  const [preferenceResolver, setPreferenceResolver] = useState<((course: Course) => void) | null>(null)
 
   // Detect schedule conflicts
   const conflicts = useMemo(() => {
@@ -59,32 +69,79 @@ export default function CartPage() {
     }
   }
 
-  const handleGenerateSchedule = () => {
+  const handleGenerateSchedule = async () => {
     if (cartCount === 0) return
 
-    toast.info("Generating schedule...")
-
-    // Solve the scheduling problem
     const courses = cartItems.map((item) => item.course)
-    const solution = solveScheduleOptimized(courses, 10)
 
-    setScheduleSolution(solution)
-    setShowScheduleDialog(true)
+    // Get scheduling statistics
+    const stats = getSchedulingStats(courses)
 
-    if (solution.scheduledCourses.length === courses.length) {
-      toast.success("Perfect schedule found with no conflicts!")
-    } else if (solution.scheduledCourses.length > 0) {
-      toast.warning(
-        `Scheduled ${solution.scheduledCourses.length} of ${courses.length} courses`,
-        {
-          description: `${solution.unschedulableCourses.length} course${solution.unschedulableCourses.length > 1 ? "s" : ""} couldn't be scheduled due to conflicts.`,
+    if (stats.conflictingPairs === 0) {
+      // No conflicts - generate schedule immediately
+      toast.success("No conflicts detected! Generating schedule...")
+
+      const solution = await interactiveSchedule(courses, async () => {
+        // This shouldn't be called since there are no conflicts
+        return courses[0]
+      })
+
+      setScheduleSolution(solution)
+      setShowScheduleDialog(true)
+      return
+    }
+
+    // There are conflicts - use interactive scheduling
+    if (stats.estimatedQuestions > 0) {
+      toast.info(
+        `Found ${stats.conflictingPairs} conflict${stats.conflictingPairs > 1 ? "s" : ""}. We'll ask you ${stats.estimatedQuestions} question${stats.estimatedQuestions > 1 ? "s" : ""} to resolve them.`,
+        { duration: 4000 }
+      )
+    }
+
+    setTotalQuestions(stats.estimatedQuestions)
+    setQuestionNumber(0)
+
+    try {
+      const solution = await interactiveSchedule(
+        courses,
+        async (question: PairwiseComparison) => {
+          // Ask user for preference
+          return new Promise<Course>((resolve) => {
+            setQuestionNumber((prev) => prev + 1)
+            setCurrentQuestion(question)
+            setPreferenceResolver(() => resolve)
+            setShowPreferenceDialog(true)
+          })
         }
       )
-    } else {
-      toast.error("Couldn't create a valid schedule", {
-        description: "All courses have conflicting times.",
-      })
+
+      setScheduleSolution(solution)
+      setShowScheduleDialog(true)
+
+      if (solution.scheduledCourses.length === courses.length) {
+        toast.success("Perfect schedule created based on your preferences!")
+      } else if (solution.scheduledCourses.length > 0) {
+        toast.success(
+          `Scheduled ${solution.scheduledCourses.length} of ${courses.length} courses`,
+          {
+            description: `${solution.unschedulableCourses.length} course${solution.unschedulableCourses.length > 1 ? "s" : ""} couldn't fit in the schedule.`,
+          }
+        )
+      }
+    } catch (error) {
+      console.error("Error generating schedule:", error)
+      toast.error("Failed to generate schedule")
     }
+  }
+
+  const handlePreferenceSelect = (course: Course) => {
+    if (preferenceResolver) {
+      preferenceResolver(course)
+      setPreferenceResolver(null)
+    }
+    setShowPreferenceDialog(false)
+    setCurrentQuestion(null)
   }
 
   return (
@@ -195,6 +252,15 @@ export default function CartPage() {
           </div>
         )}
       </div>
+
+      {/* Preference Dialog */}
+      <PreferenceDialog
+        isOpen={showPreferenceDialog}
+        question={currentQuestion}
+        questionNumber={questionNumber}
+        totalQuestions={totalQuestions}
+        onSelect={handlePreferenceSelect}
+      />
 
       {/* Schedule Builder Dialog */}
       <ScheduleBuilderDialog
