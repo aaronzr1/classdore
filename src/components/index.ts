@@ -1,5 +1,4 @@
-export { Courses } from "./courses"
-export { CourseSearch } from "./course-search"
-// export { CourseTable } from "./course-table"
-export { CourseDetailDialog } from "./course-detail-dialog"
+export { CourseBrowser } from "./course-browser"
+export { SearchBar } from "./search-bar"
+export { CourseDialog } from "./course-dialog"
 export { EmptyState } from "./empty-state"

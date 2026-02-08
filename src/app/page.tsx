@@ -1,9 +1,9 @@
-import { Courses } from "@/components/courses"
+import { CourseBrowser } from "@/components/course-browser"
 
 export default function Home() {
   return (
     <main className="min-h-screen bg-gray-50">
-      <Courses />
+      <CourseBrowser />
     </main>
   )
 }

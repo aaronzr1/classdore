@@ -7,12 +7,12 @@ import { Course } from "@/lib/types"
 import { Button } from "./ui/button"
 import { handleAddCourse as handleAddCourseUtil } from "@/lib/utils"
 
-interface CourseDetailDialogProps {
+interface CourseDialogProps {
     course: Course | null
     onClose: () => void
 }
 
-export function CourseDetailDialog({ course, onClose }: CourseDetailDialogProps) {
+export function CourseDialog({ course, onClose }: CourseDialogProps) {
     if (!course) return null
 
     const enrollmentRatio = Math.min(1, Number.parseInt(course.enrolled) / Number.parseInt(course.capacity))

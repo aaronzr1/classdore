@@ -1,5 +1,5 @@
 import { createClient } from "redis";
-import { Course, CourseSearchRequest, CourseSearchResponse, CourseTableItem, SortField, SortDirection } from "@/lib/types";
+import { Course, SortField, SortDirection } from "@/lib/types";
 import dotenv from "dotenv";
 import pako from "pako"; // For zlib/gzip decompression
 
@@ -29,105 +29,6 @@ export async function getRedisClient() {
         }
     }
     return redisClient;
-}
-
-// Optimized search function using RediSearch with proper indexing; NOTE: NOT USED YET
-export async function searchCoursesOptimized(
-    request: CourseSearchRequest
-): Promise<CourseSearchResponse> {
-    const client = await getRedisClient();
-    const {
-        query = "",
-        department,
-        school,
-        limit = 50,
-        offset = 0,
-        sortField = "course_title",
-        sortDirection = "asc"
-    } = request;
-
-    try {
-        // Build RediSearch query with filters
-        let searchQuery = "";
-        const filters: string[] = [];
-
-        // Full-text search across multiple fields
-        if (query.trim()) {
-            // Use RediSearch's multi-field search with weights
-            // course_title gets highest weight, then course_dept, then description
-            searchQuery = `(@course_title:"${query}"* | @course_dept:"${query}"* | @course_code:"${query}"* | @description:"${query}"* | @instructors:"${query}"*)`;
-        } else {
-            // Empty query - return all courses
-            searchQuery = "*";
-        }
-
-        // Add filters
-        if (department && department !== "all") {
-            filters.push(`@course_dept:{${department}}`);
-        }
-        if (school && school !== "all") {
-            filters.push(`@school:{${school}}`);
-        }
-
-        // Combine search query with filters
-        const finalQuery = filters.length > 0
-            ? `${searchQuery} ${filters.join(" ")}`
-            : searchQuery;
-
-        console.log("RediSearch query:", finalQuery);
-
-        const searchOptions: Record<string, unknown> = {
-            LIMIT: { from: offset, size: limit },
-            RETURN: ["id", "course_title", "course_dept", "instructors", "school", "description"]
-        };
-
-        // Add sorting if specified
-        if (sortField && sortDirection) {
-            searchOptions.SORTBY = {
-                field: sortField,
-                direction: sortDirection.toUpperCase()
-            };
-        }
-
-        // Execute search
-        const result = await client.ft.search("idx:courses", finalQuery, searchOptions);
-
-        // Type assertion for Redis search result
-        const searchResult = result as { total: number; documents: Array<{ id: string; value: Record<string, unknown> }> };
-
-        // Transform results to CourseTableItem format for optimal performance
-        const courses: CourseTableItem[] = searchResult.documents.map((doc) => ({
-            id: doc.value.id as string,
-            course_title: doc.value.course_title as string,
-            course_dept: doc.value.course_dept as string,
-            instructors: (doc.value.instructors as string[]) || [],
-            school: doc.value.school as string,
-            description: doc.value.description as string | null
-        }));
-
-        return {
-            courses,
-            total: searchResult.total,
-            hasMore: offset + limit < searchResult.total,
-            query: query.trim(),
-            filters: { department, school }
-        };
-
-    } catch (error) {
-        console.error("Error in optimized course search:", error);
-        throw new Error("Search failed");
-    }
-}
-
-// Get top courses for initial load (no search query); NOTE: NOT USED YET
-export async function getTopCourses(limit: number = 50): Promise<CourseSearchResponse> {
-    return searchCoursesOptimized({
-        query: "",
-        limit,
-        offset: 0,
-        sortField: "course_title",
-        sortDirection: "asc"
-    });
 }
 
 // Get departments for filter dropdown (optimized)
@@ -180,31 +81,7 @@ export async function getSchools(): Promise<string[]> {
 export async function getAllCourses(): Promise<Course[]> {
     const client = await getRedisClient();
     try {
-        const start = process.hrtime.bigint(); // High-resolution timer
-
-        // const results = await client.ft.search('idx:courses', '*', {
-        //     LIMIT: { from: 0, size: 10000 },
-        //     RETURN: [
-        //         'enrolled',
-        //         'capacity',
-        //         'course_dept',
-        //         'course_code',
-        //         'career',
-        //         'course_title',
-        //         'class_section',
-        //         'instructors',
-        //         'credit_hours',
-        //         'meeting_days',
-        //         'meeting_times',
-        //         'enrolled',
-        //         'capacity',
-        //         'status',
-        //         'id',
-        //         'requirements',
-        //         'description']
-        // });
-
-        // console.log(results?.documents);
+        const start = process.hrtime.bigint();
 
         // Get the compressed snapshot from Redis as a string
         const compressedBase64 = await client.get("courses:all:compressed");
@@ -225,7 +102,6 @@ export async function getAllCourses(): Promise<Course[]> {
         const end = process.hrtime.bigint();
         const durationMs = Number(end - start) / 1_000_000;
         console.log(`Retrieved documents in ${durationMs.toFixed(2)} ms`);
-        // console.log(`Retrieved ${courses.length} documents in ${durationMs.toFixed(2)} ms`);
 
         return courses;
     } catch (error) {

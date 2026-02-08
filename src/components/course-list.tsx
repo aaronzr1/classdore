@@ -7,7 +7,7 @@ import { ChevronUp, ChevronDown, Clock, Users, Plus } from "lucide-react"
 import { Course, SortField, SortDirection } from "@/lib/types"
 import { handleAddCourse as handleAddCourseUtil } from "@/lib/utils"
 
-interface ViewportCourseTableProps {
+interface CourseListProps {
     courses: Course[]
     sortField: SortField
     sortDirection: SortDirection
@@ -188,7 +188,7 @@ function ViewportCourseRow({ course, index, onSelect, isVisible }: ViewportCours
     )
 }
 
-export const ViewportCourseTable = forwardRef<HTMLDivElement, ViewportCourseTableProps>(
+export const CourseList = forwardRef<HTMLDivElement, CourseListProps>(
     (
         {
             courses,
@@ -394,4 +394,4 @@ export const ViewportCourseTable = forwardRef<HTMLDivElement, ViewportCourseTabl
     }
 )
 
-ViewportCourseTable.displayName = "ViewportCourseTable"
+CourseList.displayName = "CourseList"

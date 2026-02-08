@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Search, Filter } from "lucide-react"
 
-interface HomePageProps {
+interface LandingProps {
   searchTerm: string
   setSearchTerm: (term: string) => void
   selectedDepartment: string
@@ -19,7 +19,7 @@ interface HomePageProps {
   onSearch: () => void
 }
 
-const HomePageComponent = forwardRef<HTMLDivElement, HomePageProps>(
+const LandingComponent = forwardRef<HTMLDivElement, LandingProps>(
   (
     {
       searchTerm,
@@ -216,6 +216,6 @@ const HomePageComponent = forwardRef<HTMLDivElement, HomePageProps>(
   },
 )
 
-HomePageComponent.displayName = "HomePage"
+LandingComponent.displayName = "Landing"
 
-export const HomePage = memo(HomePageComponent)
+export const Landing = memo(LandingComponent)

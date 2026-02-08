@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Search, Filter } from "lucide-react"
 
-interface CourseSearchProps {
+interface SearchBarProps {
     searchTerm: string
     setSearchTerm: (term: string) => void
     selectedDepartment: string
@@ -23,7 +23,7 @@ interface CourseSearchProps {
     onReturnHome: () => void
 }
 
-export const CourseSearch = forwardRef<HTMLDivElement, CourseSearchProps>(
+export const SearchBar = forwardRef<HTMLDivElement, SearchBarProps>(
     (
         {
             searchTerm,
@@ -219,4 +219,4 @@ export const CourseSearch = forwardRef<HTMLDivElement, CourseSearchProps>(
     }
 )
 
-CourseSearch.displayName = "CourseSearch"
+SearchBar.displayName = "SearchBar"

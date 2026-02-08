@@ -2,7 +2,7 @@ import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 import { toast } from "sonner"
 import { X } from "lucide-react"
-import { parseCourseId, getAddCourseUrl } from "./course-utils"
+import { parseCourseId, getAddCourseUrl } from "./yes-links"
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))

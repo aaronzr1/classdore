@@ -2,54 +2,15 @@
 
 import { useEffect, useState, useCallback } from "react"
 import { Course, SortField, SortDirection } from "@/lib/types"
-// import { filterAndSortCourses, initFuse } from "@/lib/search-utils"
 import { useSticky } from "@/lib/use-sticky"
 import { useDebounce } from "@/lib/use-debounce"
-import { CourseSearch } from "./course-search"
-import { ViewportCourseTable } from "./viewport-course-table"
-import { CourseDetailDialog } from "./course-detail-dialog"
+import { SearchBar } from "./search-bar"
+import { CourseList } from "./course-list"
+import { CourseDialog } from "./course-dialog"
 import { EmptyState } from "./empty-state"
-import { HomePage } from "./home-page"
+import { Landing } from "./landing"
 
-// const handleSearch = async (query: string) => {
-
-//     try {
-
-//         if (!query.trim()) {
-//             setSearchResults([])
-//             return
-//         }
-
-//         query = sanitizeQuery(query) // setting some defaults
-//         if (!query.trim()) {
-//             console.log("Single character query, populating all courses")
-
-//             const response = await fetch(`/api/courses`)
-//             const courses = await response.json()
-//             setSearchResults(courses)
-
-//             return
-//         }
-
-//         // send query to backend
-//         console.log("Input query:", query)
-//         const response = await fetch(`/api/courses/search?keywords=${encodeURIComponent(searchTerm)}`)
-//         const courses = await response.json()
-
-//         if (Array.isArray(courses)) {
-//             setSearchResults(courses)
-//         } else {
-//             console.error("Unexpected courses format:", courses)
-//             setSearchResults([])
-//         }
-
-//     } catch (error) {
-//         console.error("Error fetching search results:", error)
-//         setSearchResults([]) // set searchResults to an empty array on error
-//     }
-// }
-
-export default function Courses() {
+export default function CourseBrowser() {
     const [searchTerm, setSearchTerm] = useState("")
     const [selectedDepartment, setSelectedDepartment] = useState<string>("all") // filter
     const [selectedSchool, setSelectedSchool] = useState<string>("all") // filter
@@ -60,7 +21,6 @@ export default function Courses() {
 
     const [hasSearched, setHasSearched] = useState(false)
 
-    // const [allCourses, setAllCourses] = useState<Course[]>([])
     const [allDepartments, setAllDepartments] = useState<string[]>([])
     const [allSchools, setAllSchools] = useState<string[]>([])
     const [isLoading, setIsLoading] = useState(true) // loading indicator for initial load
@@ -207,7 +167,7 @@ export default function Courses() {
         setSearchTerm('')
     }, [])
 
-    // Ensure input stays focused after transitioning from HomePage
+    // Ensure input stays focused after transitioning from Landing
     useEffect(() => {
         if (hasSearched && searchBarRef.current && 'focusInput' in searchBarRef.current) {
             // Small delay to ensure DOM is ready
@@ -221,7 +181,7 @@ export default function Courses() {
     if (!hasSearched) {
         return (
             <>
-                <HomePage
+                <Landing
                     searchTerm={searchTerm}
                     setSearchTerm={setSearchTerm}
                     selectedDepartment={selectedDepartment}
@@ -233,7 +193,7 @@ export default function Courses() {
                     onSearch={handleInitialSearch}
                 />
 
-                <CourseDetailDialog course={selectedCourse} onClose={() => setSelectedCourse(null)} />
+                <CourseDialog course={selectedCourse} onClose={() => setSelectedCourse(null)} />
             </>
         )
     }
@@ -252,7 +212,7 @@ export default function Courses() {
                 </p>
             </div>
 
-            <CourseSearch
+            <SearchBar
                 ref={searchBarRef}
                 searchTerm={searchTerm}
                 setSearchTerm={setSearchTerm}
@@ -278,7 +238,7 @@ export default function Courses() {
             ) : isSearching ? (
                 <div className="text-center py-10">Searching...</div>
             ) : searchResults.length > 0 ? ( // TODO: filter/sort
-                <ViewportCourseTable
+                <CourseList
                     ref={tableHeaderRef}
                     courses={searchResults} // TODO: filter/sort
                     sortField={sortField}
@@ -292,9 +252,9 @@ export default function Courses() {
                 <EmptyState />
             )}
 
-            <CourseDetailDialog course={selectedCourse} onClose={() => setSelectedCourse(null)} />
+            <CourseDialog course={selectedCourse} onClose={() => setSelectedCourse(null)} />
         </div>
     )
 }
 
-export { Courses }
+export { CourseBrowser }
